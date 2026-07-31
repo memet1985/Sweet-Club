@@ -35,7 +35,7 @@
         <div id="registerSection" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-4">
             <div class="text-center space-y-1">
                 <h2 class="text-xl font-bold text-amber-200">Aramıza Hoş Geldin! 🧇</h2>
-                <p class="text-xs text-gray-400">Ücretsiz kova ve limonata kazanmak için hemen kayıt ol.</p>
+                <p class="text-xs text-gray-400">Özel hediyeler kazanmak için hemen kayıt ol.</p>
             </div>
             <div class="space-y-3">
                 <div>
@@ -83,11 +83,11 @@
                     <div class="bg-black/25 backdrop-blur-md rounded-2xl p-4 flex justify-between items-center border border-amber-500/20 shadow-inner mt-4">
                         <div>
                             <p class="text-xs text-amber-200/70 uppercase tracking-wider font-semibold">Mevcut Puanın</p>
-                            <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 / 100</p>
+                            <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 / 200</p>
                         </div>
                         <div class="text-right">
                             <span class="text-2xl">🥤</span>
-                            <p class="text-xs text-amber-100/90 mt-1">Ödüle <br><span id="remainingCount" class="font-bold text-amber-400">100 Puan</span> Kaldı!</p>
+                            <p class="text-xs text-amber-100/90 mt-1">Ödüle <br><span id="remainingCount" class="font-bold text-amber-400">200 Puan</span> Kaldı!</p>
                         </div>
                     </div>
                 </div>
@@ -108,12 +108,12 @@
             <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-sm font-semibold text-gray-300">Ödül İlerlemesi</span>
-                    <span id="progressText" class="text-xs font-bold text-amber-400">0 / 100 Puan</span>
+                    <span id="progressText" class="text-xs font-bold text-amber-400">0 / 200 Puan</span>
                 </div>
                 <div class="w-full bg-gray-900 h-3 rounded-full overflow-hidden p-0.5 border border-gray-800">
                     <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%;"></div>
                 </div>
-                <p class="text-xs text-gray-400 mt-3 text-center">Toplam 100 puana ulaş, <strong class="text-amber-300">Ücretsiz Kova ve Limonata</strong> kazan!</p>
+                <p class="text-xs text-gray-400 mt-3 text-center">Toplam 200 puana ulaş, <strong class="text-amber-300">Büyük Ödülü</strong> kazan!</p>
             </div>
         </div>
     </main>
@@ -126,9 +126,8 @@
         const SUPABASE_URL = 'https://yatgnoiybbjvmreikeqs.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const targetPoints = 100;
+        const targetPoints = 200; // Hedef puan 200 yapıldı
 
-        // Doğum tarihi otomatik gg/aa/yyyy formatlayıcı fonksiyon
         function formatBirthdate(input) {
             let v = input.value.replace(/\D/g, '');
             if (v.length > 2) {
