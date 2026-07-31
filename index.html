@@ -73,11 +73,11 @@
             <p class="text-xs text-gray-400 mt-3 text-center">Toplam 100 puana ulaş, <strong class="text-amber-300">Ücretsiz Ürün</strong> ödülünü kap!</p>
         </div>
 
-        <!-- QR Action Button -->
+        <!-- Action Button -->
         <div class="text-center">
             <button onclick="openModal()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-4 px-6 rounded-2xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center space-x-3 cursor-pointer">
                 <svg class="w-6 h-6 text-gray-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8H2a1 1 0 00-1 1v3a1 1 0 001 1h3m10-5h2a1 1 0 011 1v3a1 1 0 01-1 1h-2m-6 0H8m0 0V8m0 4v4m0 0H4a1 1 0 01-1-1v-3a1 1 0 011-1h1m4 4v3m0 0h4m-4 0h-4"></path></svg>
-                <span>Kasada Fiş Tutarı ile QR Okut</span>
+                <span>Kasada Puan İşlemi Yap</span>
             </button>
         </div>
 
@@ -89,7 +89,7 @@
                     <span>💳 Fiş / Tutar Oranı</span>
                     <strong class="text-amber-400">Her 10 TL = 1 Puan</strong>
                 </div>
-                <p class="text-[11px] text-gray-400 italic">Örn: 350 TL tutarındaki fiş için hesabınıza 35 puan eklenir.</p>
+                <p class="text-[11px] text-gray-400 italic">Örn: 350 TL tutarındaki fiş için kasadaki görevli onay verir ve hesabınıza 35 puan eklenir.</p>
             </div>
 
             <div class="flex items-center justify-between p-3 bg-[#171a21] rounded-xl border border-amber-500/30">
@@ -106,22 +106,28 @@
 
     </main>
 
-    <!-- Fiş Tutarı Giriş Modal Penceresi -->
+    <!-- Personel Onaylı Fiş Tutarı Giriş Modal Penceresi -->
     <div id="qrModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-[#1e222a] border border-gray-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative">
-            <h3 class="text-lg font-bold text-amber-200 mb-2">Fiş Tutarını Giriniz</h3>
-            <p class="text-xs text-gray-400 mb-4">Kasada ödediğiniz toplam fiş tutarını (TL) yazarak puanınızı ekleyin.</p>
+            <h3 class="text-lg font-bold text-amber-200 mb-2">Kasa Personel Onayı</h3>
+            <p class="text-xs text-gray-400 mb-4">Bu işlem yalnızca kasadaki görevli tarafından gerçekleştirilebilir.</p>
             
-            <div class="mb-4">
-                <label for="receiptAmount" class="block text-xs font-medium text-gray-300 mb-1">Toplam Fiş Tutarı (TL)</label>
-                <input type="number" id="receiptAmount" placeholder="Örn: 350" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-lg font-semibold">
+            <div class="space-y-3 mb-4">
+                <div>
+                    <label for="receiptAmount" class="block text-xs font-medium text-gray-300 mb-1">Toplam Fiş Tutarı (TL)</label>
+                    <input type="number" id="receiptAmount" placeholder="Örn: 350" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-base font-semibold">
+                </div>
+                <div>
+                    <label for="staffPin" class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
+                    <input type="password" id="staffPin" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-base font-semibold">
+                </div>
             </div>
 
-            <div class="space-y-2 mb-4">
-                <button onclick="addPointsFromReceipt()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md">
-                    Puanı Hesabıma Ekle
+            <div class="space-y-2 mb-2">
+                <button onclick="addPointsWithStaffApproval()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md cursor-pointer">
+                    Onayla ve Puanı Ekle
                 </button>
-                <button onclick="closeModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-sm transition">
+                <button onclick="closeModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-sm transition cursor-pointer">
                     Vazgeç
                 </button>
             </div>
@@ -137,6 +143,9 @@
     <script>
         let currentPoints = parseInt(localStorage.getItem('sweetPoints')) || 0;
         const targetPoints = 100;
+        
+        // Kasa görevlisinin bildiği ortak şifre (Bunu dilediğiniz gibi değiştirebilirsiniz)
+        const STAFF_PIN = "1985";
 
         function updateUI() {
             if (currentPoints > targetPoints) currentPoints = targetPoints;
@@ -151,6 +160,7 @@
 
         function openModal() {
             document.getElementById('receiptAmount').value = '';
+            document.getElementById('staffPin').value = '';
             document.getElementById('qrModal').classList.remove('hidden');
             document.getElementById('qrModal').classList.add('flex');
             document.getElementById('receiptAmount').focus();
@@ -161,8 +171,9 @@
             document.getElementById('qrModal').classList.add('hidden');
         }
 
-        function addPointsFromReceipt() {
+        function addPointsWithStaffApproval() {
             const amountInput = document.getElementById('receiptAmount').value;
+            const pinInput = document.getElementById('staffPin').value;
             const amount = parseFloat(amountInput);
 
             if (isNaN(amount) || amount <= 0) {
@@ -170,6 +181,12 @@
                 return;
             }
 
+            if (pinInput !== STAFF_PIN) {
+                alert('Hatalı Kasa Yetkili Şifresi! Puan yalnızca kasa görevlisi tarafından eklenebilir.');
+                return;
+            }
+
+            // Her 10 TL = 1 Puan kuralı (Örn: 350 TL = 35 Puan)
             const earnedPoints = Math.floor(amount / 10);
 
             if (earnedPoints <= 0) {
@@ -184,7 +201,7 @@
                 alert('🎉 Tebrikler! 100 puana ulaştın ve Ücretsiz Ürün kazanma hakkı kazandın!');
                 currentPoints = 100;
             } else {
-                alert('🚀 ' + amount + ' TL tutarındaki fişiniz için +' + earnedPoints + ' puan eklendi!');
+                alert('🚀 ' + amount + ' TL tutarındaki fiş için +' + earnedPoints + ' puan başarıyla eklendi!');
             }
             updateUI();
         }
