@@ -88,7 +88,7 @@
                     <div class="bg-black/25 backdrop-blur-md rounded-2xl p-4 flex justify-between items-center border border-amber-500/20 shadow-inner mt-4">
                         <div>
                             <p class="text-xs text-amber-200/70 uppercase tracking-wider font-semibold">Mevcut Puanın</p>
-                            <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 / 200</p>
+                            <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 Puan</p>
                         </div>
                         <div class="text-right">
                             <span class="text-2xl">🥤</span>
@@ -174,17 +174,14 @@
                 return;
             }
 
-            // Veritabanında bu numara kayıtlı mı kontrol et
             let { data: existingUser } = await client.from('customers').select('*').eq('phone', phone).single();
 
             if (existingUser) {
-                // Kayıtlıysa direkt giriş yap
                 localStorage.setItem('sweetUserPhone', phone);
                 checkUser();
                 return;
             }
 
-            // Kayıtlı değilse diğer alanların doluluğunu kontrol et ve yeni kayıt oluştur
             if (!name) {
                 alert('Lütfen ad ve soyadınızı giriniz.');
                 return;
@@ -221,27 +218,27 @@
         }
 
         function updateUI(user) {
-            let currentPoints = user.points || 0;
-            if (currentPoints > targetPoints) currentPoints = targetPoints;
-
+            let actualPoints = user.points || 0; // Gerçek toplam puan (Örn: 206)
+            
+            // Merkezde ne yazıyorsa aynen gösterilir
+            document.getElementById('userPoints').innerText = actualPoints + " Puan";
             document.getElementById('displayUserName').innerText = user.name;
             document.getElementById('displayUserPhone').innerText = user.phone;
-            document.getElementById('userPoints').innerText = currentPoints + " / " + targetPoints;
+
+            // İlerleme çubuğu ve kalan hesaplaması 200 puan üzerinden yapılır
+            let progressPoints = actualPoints > targetPoints ? targetPoints : actualPoints;
+            let remaining = targetPoints - actualPoints;
             
             let remainingText = "";
-            let remaining = targetPoints - currentPoints;
-            
-            if (currentPoints >= 175) {
-                remainingText = "Son " + remaining + " Puan";
+            if (actualPoints >= targetPoints) {
+                remainingText = "Ödüle Hazır!";
             } else if (remaining > 0) {
                 remainingText = remaining + " Puan";
-            } else {
-                remainingText = "Ödüle Hazır!";
             }
 
             document.getElementById('remainingCount').innerText = remainingText;
-            document.getElementById('progressText').innerText = currentPoints + " / " + targetPoints + " Puan";
-            document.getElementById('progressBar').style.width = ((currentPoints / targetPoints) * 100) + "%";
+            document.getElementById('progressText').innerText = progressPoints + " / " + targetPoints + " Puan";
+            document.getElementById('progressBar').style.width = ((progressPoints / targetPoints) * 100) + "%";
         }
 
         let qrInitialized = false;
