@@ -126,7 +126,7 @@
         const SUPABASE_URL = 'https://yatgnoiybbjvmreikeqs.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const targetPoints = 200; // Hedef puan 200 yapıldı
+        const targetPoints = 200;
 
         function formatBirthdate(input) {
             let v = input.value.replace(/\D/g, '');
@@ -137,6 +137,15 @@
                 v = v.substring(0, 5) + '/' + v.substring(5, 9);
             }
             input.value = v;
+        }
+
+        async function requestNotificationPermission() {
+            if ("Notification" in window && "serviceWorker" in navigator) {
+                const permission = await Notification.requestPermission();
+                if (permission === "granted") {
+                    console.log("Bildirim izni verildi.");
+                }
+            }
         }
 
         async function checkUser() {
@@ -187,6 +196,7 @@
             }
 
             localStorage.setItem('sweetUserPhone', phone);
+            requestNotificationPermission();
             checkUser();
         }
 
@@ -198,8 +208,19 @@
             document.getElementById('displayUserPhone').innerText = user.phone;
             document.getElementById('userPoints').innerText = currentPoints + " / " + targetPoints;
             
+            // 175 puan ve üzerine gelindiğinde özel "Son 25 Puan" ifadesi gösterilir
+            let remainingText = "";
             let remaining = targetPoints - currentPoints;
-            document.getElementById('remainingCount').innerText = remaining > 0 ? remaining + " Puan" : "Ödüle Hazır!";
+            
+            if (currentPoints >= 175) {
+                remainingText = "Son " + remaining + " Puan";
+            } else if (remaining > 0) {
+                remainingText = remaining + " Puan";
+            } else {
+                remainingText = "Ödüle Hazır!";
+            }
+
+            document.getElementById('remainingCount').innerText = remainingText;
             document.getElementById('progressText').innerText = currentPoints + " / " + targetPoints + " Puan";
             document.getElementById('progressBar').style.width = ((currentPoints / targetPoints) * 100) + "%";
         }
