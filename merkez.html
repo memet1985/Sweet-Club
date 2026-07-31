@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sweet Waffle - Merkez Yönetim Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #171a21; color: #f3f4f6; }
@@ -37,7 +39,7 @@
             </div>
         </div>
 
-        <!-- Müşteri Bilgi ve İşlem Kartı (Başlangıçta gizli) -->
+        <!-- Müşteri Bilgi ve İşlem Kartı -->
         <div id="customerCard" class="hidden bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-4">
             <div class="bg-[#171a21] p-4 rounded-2xl border border-gray-800 space-y-1">
                 <p class="text-xs text-gray-400">Müşteri Adı Soyadı:</p>
@@ -77,73 +79,45 @@
             </div>
         </div>
 
-        <!-- Sistemdeki Kayıtlı Müşteriler Listesi (Hızlı Kontrol) -->
-        <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-3">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Bu Tarayıcıdaki Kayıtlı Üyeler</h3>
-            <div id="userListContainer" class="space-y-2 max-h-40 overflow-y-auto text-xs text-gray-300">
-                <p class="text-gray-500 italic">Henüz kayıt listesi boş veya farklı tarayıcıda.</p>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Footer -->
     <footer class="w-full text-center py-4 text-xs text-gray-500 border-t border-gray-800/60">
         &copy; 2026 Sweet Waffle - Merkez Yönetim Paneli
     </footer>
 
     <script>
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         const STAFF_PIN = "1985"; 
-        let activePhone = "";
+        let activeCustomer = null;
 
-        function loadAllUsersList() {
-            let users = JSON.parse(localStorage.getItem('sweetAllUsers')) || {};
-            let container = document.getElementById('userListContainer');
-            container.innerHTML = "";
-
-            let keys = Object.keys(users);
-            if (keys.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 italic">Kayıt bulunamadı.</p>';
-                return;
-            }
-
-            keys.forEach(phone => {
-                let u = users[phone];
-                let div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-[#171a21] p-2.5 rounded-xl border border-gray-800";
-                div.innerHTML = `<span><b>${u.name}</b> (${u.phone})</span> <span class="text-amber-400 font-bold">${u.points || 0} Puan</span>`;
-                div.onclick = () => {
-                    document.getElementById('searchPhone').value = u.phone;
-                    searchCustomer();
-                };
-                container.appendChild(div);
-            });
-        }
-
-        function searchCustomer() {
+        async function searchCustomer() {
             const phone = document.getElementById('searchPhone').value.trim();
             if (!phone) {
                 alert('Lütfen telefon numarası giriniz.');
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem('sweetAllUsers')) || {};
-            let user = users[phone];
+            let { data, error } = await client.from('customers').select('*').eq('phone', phone).single();
 
-            if (!user) {
-                alert('Bu telefon numarasına ait kayıtlı müşteri bulunamadı! Müşteri aynı tarayıcıdan kayıt olmalıdır veya henüz kayıt açılmamıştır.');
+            if (error || !data) {
+                alert('Bu telefon numarasına ait kayıtlı müşteri bulunamadı!');
                 document.getElementById('customerCard').classList.add('hidden');
+                activeCustomer = null;
                 return;
             }
 
-            activePhone = phone;
-            document.getElementById('resName').innerText = user.name;
-            document.getElementById('resPhone').innerText = user.phone;
-            document.getElementById('resPoints').innerText = (user.points || 0) + " Puan";
+            activeCustomer = data;
+            document.getElementById('resName').innerText = data.name;
+            document.getElementById('resPhone').innerText = data.phone;
+            document.getElementById('resPoints').innerText = (data.points || 0) + " Puan";
             document.getElementById('customerCard').classList.remove('hidden');
         }
 
-        function addPoints() {
+        async function addPoints() {
+            if (!activeCustomer) return;
             const amountInput = document.getElementById('receiptAmount').value;
             const pinInput = document.getElementById('staffPin').value;
             const amount = parseFloat(amountInput);
@@ -164,20 +138,24 @@
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem('sweetAllUsers')) || {};
-            if (!users[activePhone]) return;
+            const newTotalPoints = (activeCustomer.points || 0) + earnedPoints;
 
-            users[activePhone].points = (users[activePhone].points || 0) + earnedPoints;
-            localStorage.setItem('sweetAllUsers', JSON.stringify(users));
+            let { error } = await client.from('customers').update({ points: newTotalPoints }).eq('phone', activeCustomer.phone);
 
-            document.getElementById('resPoints').innerText = users[activePhone].points + " Puan";
+            if (error) {
+                alert('Puan eklenirken hata oluştu: ' + error.message);
+                return;
+            }
+
+            activeCustomer.points = newTotalPoints;
+            document.getElementById('resPoints').innerText = newTotalPoints + " Puan";
             document.getElementById('receiptAmount').value = '';
             document.getElementById('staffPin').value = '';
-            loadAllUsersList();
             alert('🚀 Başarıyla ' + earnedPoints + ' puan eklendi!');
         }
 
-        function useReward() {
+        async function useReward() {
+            if (!activeCustomer) return;
             const pinInput = document.getElementById('rewardStaffPin').value;
 
             if (pinInput !== STAFF_PIN) {
@@ -185,24 +163,23 @@
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem('sweetAllUsers')) || {};
-            if (!users[activePhone]) return;
-
-            if ((users[activePhone].points || 0) < 100) {
+            if ((activeCustomer.points || 0) < 100) {
                 alert('⚠️ Müşterinin puanı 100’den az, ödül verilemez!');
                 return;
             }
 
-            users[activePhone].points = 0;
-            localStorage.setItem('sweetAllUsers', JSON.stringify(users));
+            let { error } = await client.from('customers').update({ points: 0 }).eq('phone', activeCustomer.phone);
 
+            if (error) {
+                alert('İşlem başarısız: ' + error.message);
+                return;
+            }
+
+            activeCustomer.points = 0;
             document.getElementById('resPoints').innerText = "0 Puan";
             document.getElementById('rewardStaffPin').value = '';
-            loadAllUsersList();
             alert('✅ Ödül onaylandı! Müşterinin puanı sıfırlandı.');
         }
-
-        loadAllUsersList();
     </script>
 </body>
 </html>
