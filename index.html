@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: #171a21; /* Logonuzun arkaplanına uygun koyu ton */
+            background: #171a21;
             color: #f3f4f6;
         }
     </style>
@@ -22,7 +22,6 @@
     <header class="w-full bg-[#1e222a]/90 backdrop-blur-md shadow-md py-3 px-6 sticky top-0 z-50 border-b border-gray-800">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <!-- Orijinal Logo.webp Kullanımı -->
                 <img src="Logo.webp" alt="Sweet Waffle Logo" class="w-10 h-10 rounded-full object-cover border border-amber-500/30 shadow-md">
                 <h1 class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-200 via-amber-400 to-[#d4975d] bg-clip-text text-transparent">Sweet Waffle</h1>
             </div>
@@ -37,7 +36,6 @@
 
         <!-- User Card & Points -->
         <div class="bg-gradient-to-br from-[#703f1e] via-[#593014] to-[#3a1d0a] rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden border border-amber-900/40">
-            <!-- Decorative Glows -->
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl"></div>
             <div class="absolute -left-10 -top-10 w-40 h-40 bg-amber-200/10 rounded-full blur-3xl"></div>
 
@@ -47,18 +45,17 @@
                         <p class="text-amber-200/80 text-sm font-medium">Hoş Geldin,</p>
                         <h2 id="userName" class="text-2xl font-bold tracking-tight text-amber-100">Waffle Sever</h2>
                     </div>
-                    <!-- Kart Üstü Küçük Logo -->
                     <img src="Logo.webp" alt="Logo" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400/40 shadow-lg">
                 </div>
                 
                 <div class="bg-black/25 backdrop-blur-md rounded-2xl p-4 flex justify-between items-center border border-amber-500/20 shadow-inner mt-4">
                     <div>
                         <p class="text-xs text-amber-200/70 uppercase tracking-wider font-semibold">Mevcut Puanın</p>
-                        <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">4 Puan</p>
+                        <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 / 100</p>
                     </div>
                     <div class="text-right">
-                        <span class="text-2xl">🎯</span>
-                        <p class="text-xs text-amber-100/90 mt-1">Ücretsiz Waffle'a <br><span id="remainingCount" class="font-bold text-amber-400">1 Puan</span> Kaldı!</p>
+                        <span class="text-2xl">🎁</span>
+                        <p class="text-xs text-amber-100/90 mt-1">Ücretsiz Ürüne <br><span id="remainingCount" class="font-bold text-amber-400">100 Puan</span> Kaldı!</p>
                     </div>
                 </div>
             </div>
@@ -68,40 +65,68 @@
         <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm font-semibold text-gray-300">Ödül İlerlemesi</span>
-                <span id="progressText" class="text-xs font-bold text-amber-400">4 / 5 Puan</span>
+                <span id="progressText" class="text-xs font-bold text-amber-400">0 / 100 Puan</span>
             </div>
             <div class="w-full bg-gray-900 h-3 rounded-full overflow-hidden p-0.5 border border-gray-800">
-                <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 80%;"></div>
+                <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%;"></div>
             </div>
-            <p class="text-xs text-gray-400 mt-3 text-center">Mağazamızda kasadaki QR kodu okut, her puanda lezzete yaklaş!</p>
+            <p class="text-xs text-gray-400 mt-3 text-center">Toplam 100 puana ulaş, <strong class="text-amber-300">Ücretsiz Ürün</strong> ödülünü kap!</p>
         </div>
 
         <!-- QR Action Button -->
         <div class="text-center">
-            <button onclick="scanQRCode()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-4 px-6 rounded-2xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center space-x-3 cursor-pointer">
+            <button onclick="openModal()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-4 px-6 rounded-2xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center space-x-3 cursor-pointer">
                 <svg class="w-6 h-6 text-gray-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8H2a1 1 0 00-1 1v3a1 1 0 001 1h3m10-5h2a1 1 0 011 1v3a1 1 0 01-1 1h-2m-6 0H8m0 0V8m0 4v4m0 0H4a1 1 0 01-1-1v-3a1 1 0 011-1h1m4 4v3m0 0h4m-4 0h-4"></path></svg>
-                <span>Kasada QR Kod Okut</span>
+                <span>Kasada Fiş Tutarı ile QR Okut</span>
             </button>
         </div>
 
-        <!-- Rewards Catalog Preview -->
+        <!-- Puan Sistemi Bilgisi -->
         <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800">
-            <h3 class="text-sm font-semibold text-gray-300 mb-3">Kazanabileceğin Ödüller</h3>
-            <div class="space-y-3">
-                <div class="flex items-center justify-between p-3 bg-[#171a21] rounded-xl border border-gray-800">
-                    <div class="flex items-center space-x-3">
-                        <img src="Logo.webp" alt="Reward" class="w-10 h-10 rounded-full object-cover border border-amber-500/20">
-                        <div>
-                            <p class="text-sm font-semibold text-amber-100">Klasik Waffle</p>
-                            <p class="text-xs text-gray-400">5 Puan karşılığı hediye</p>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg">Hedef</span>
+            <h3 class="text-sm font-semibold text-gray-300 mb-3">Puan Kazanma Sistemi</h3>
+            <div class="text-xs text-gray-400 mb-4 bg-[#171a21] p-3 rounded-xl border border-gray-800 space-y-2">
+                <div class="flex justify-between items-center py-1 border-b border-gray-800">
+                    <span>💳 Fiş / Tutar Oranı</span>
+                    <strong class="text-amber-400">Her 10 TL = 1 Puan</strong>
                 </div>
+                <p class="text-[11px] text-gray-400 italic">Örn: 350 TL tutarındaki fiş için hesabınıza 35 puan eklenir.</p>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-[#171a21] rounded-xl border border-amber-500/30">
+                <div class="flex items-center space-x-3">
+                    <img src="Logo.webp" alt="Reward" class="w-10 h-10 rounded-full object-cover border border-amber-500/20">
+                    <div>
+                        <p class="text-sm font-semibold text-amber-100">Büyük Ödül: Ücretsiz Ürün</p>
+                        <p class="text-xs text-gray-400">100 Puan karşılığı hediye</p>
+                    </div>
+                </div>
+                <span class="text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg">Hedef</span>
             </div>
         </div>
 
     </main>
+
+    <!-- Fiş Tutarı Giriş Modal Penceresi -->
+    <div id="qrModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#1e222a] border border-gray-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative">
+            <h3 class="text-lg font-bold text-amber-200 mb-2">Fiş Tutarını Giriniz</h3>
+            <p class="text-xs text-gray-400 mb-4">Kasada ödediğiniz toplam fiş tutarını (TL) yazarak puanınızı ekleyin.</p>
+            
+            <div class="mb-4">
+                <label for="receiptAmount" class="block text-xs font-medium text-gray-300 mb-1">Toplam Fiş Tutarı (TL)</label>
+                <input type="number" id="receiptAmount" placeholder="Örn: 350" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-lg font-semibold">
+            </div>
+
+            <div class="space-y-2 mb-4">
+                <button onclick="addPointsFromReceipt()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md">
+                    Puanı Hesabıma Ekle
+                </button>
+                <button onclick="closeModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-sm transition">
+                    Vazgeç
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="w-full text-center py-4 text-xs text-gray-500 border-t border-gray-800/60">
@@ -110,28 +135,62 @@
 
     <!-- Interactivity Script -->
     <script>
-        let currentPoints = 4;
-        const targetPoints = 5;
+        let currentPoints = parseInt(localStorage.getItem('sweetPoints')) || 0;
+        const targetPoints = 100;
 
         function updateUI() {
-            document.getElementById('userPoints').innerText = currentPoints + " Puan";
+            if (currentPoints > targetPoints) currentPoints = targetPoints;
+            document.getElementById('userPoints').innerText = currentPoints + " / " + targetPoints;
             let remaining = targetPoints - currentPoints;
             document.getElementById('remainingCount').innerText = remaining + " Puan";
             document.getElementById('progressText').innerText = currentPoints + " / " + targetPoints + " Puan";
             let percentage = (currentPoints / targetPoints) * 100;
             document.getElementById('progressBar').style.width = percentage + "%";
+            localStorage.setItem('sweetPoints', currentPoints);
         }
 
-        function scanQRCode() {
-            currentPoints++;
-            if(currentPoints > targetPoints) {
-                alert('Tebrikler! 5 puana ulaştın ve ücretsiz Waffle kazandın! 🎉');
-                currentPoints = 0; 
+        function openModal() {
+            document.getElementById('receiptAmount').value = '';
+            document.getElementById('qrModal').classList.remove('hidden');
+            document.getElementById('qrModal').classList.add('flex');
+            document.getElementById('receiptAmount').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('qrModal').classList.remove('flex');
+            document.getElementById('qrModal').classList.add('hidden');
+        }
+
+        function addPointsFromReceipt() {
+            const amountInput = document.getElementById('receiptAmount').value;
+            const amount = parseFloat(amountInput);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('Lütfen geçerli bir fiş tutarı giriniz.');
+                return;
+            }
+
+            // Her 10 TL = 1 Puan kuralı (Örn: 350 TL = 35 Puan)
+            const earnedPoints = Math.floor(amount / 10);
+
+            if (earnedPoints <= 0) {
+                alert('Girilen tutar için en az 1 puan kazanılması gerekmektedir (Minimum 10 TL).');
+                return;
+            }
+
+            currentPoints += earnedPoints;
+            closeModal();
+            
+            if(currentPoints >= targetPoints) {
+                alert('🎉 Tebrikler! 100 puana ulaştın ve Ücretsiz Ürün kazanma hakkı kazandın!');
+                currentPoints = 100;
             } else {
-                alert('QR Kod başarıyla okutuldu! +1 Puan eklendi. 🚀');
+                alert('🚀 ' + amount + ' TL tutarındaki fişiniz için +' + earnedPoints + ' puan eklendi!');
             }
             updateUI();
         }
+
+        updateUI();
     </script>
 </body>
 </html>
