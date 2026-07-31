@@ -27,8 +27,25 @@
 
     <main class="max-w-md w-full mx-auto p-4 flex-grow flex flex-col justify-center space-y-6">
 
-        <!-- MÜŞTERİ BİLGİ VE İŞLEM PANELİ -->
-        <div id="panelSection" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-5">
+        <!-- KASA / YETKİLİ GİRİŞ EKRANI -->
+        <div id="loginSection" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-4">
+            <div class="text-center space-y-1">
+                <h2 class="text-xl font-bold text-amber-200">Yetkili Girişi 🔒</h2>
+                <p class="text-xs text-gray-400">İşlem yapabilmek için lütfen şifrenizi giriniz.</p>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
+                    <input type="password" id="masterPassInput" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
+                <button onclick="verifyMasterLogin()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
+                    Giriş Yap
+                </button>
+            </div>
+        </div>
+
+        <!-- MÜŞTERİ BİLGİ VE İŞLEM PANELİ (Başlangıçta Gizli) -->
+        <div id="panelSection" class="hidden bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-5">
             <div id="loadingInfo" class="text-center text-gray-400 text-sm py-8">
                 Müşteri bilgileri yükleniyor veya QR kod okutulmadı...
             </div>
@@ -50,22 +67,14 @@
                         <label class="block text-xs font-medium text-gray-300 mb-1">Toplam Fiş Tutarı (TL)</label>
                         <input type="number" id="receiptAmount" placeholder="Örn: 350" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
-                        <input type="password" id="staffPassAdd" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                    </div>
                     <button onclick="addPoints()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
                         Puanı Hesaba Ekle
                     </button>
                 </div>
 
-                <!-- ÖDÜL KULLANIMI (200 PUAN DÜŞME) ALANI -->
+                <!-- ÖDÜL KULLANIMI (200 PUAN DÜŞÜMÜ) ALANI -->
                 <div class="space-y-3 border-t border-gray-800 pt-4">
                     <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider">ÖDÜL KULLANIMI (200 PUAN DÜŞÜMÜ)</h3>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
-                        <input type="password" id="staffPassRedeem" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                    </div>
                     <button onclick="redeemReward()" class="w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
                         Ödülü Ver ve Kalanı Cüzdanda Bırak
                     </button>
@@ -83,15 +92,27 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        const STAFF_PASSWORD = "123"; // Kasa yetkili şifrenizi buraya yazabilirsiniz
+        const STAFF_PASSWORD = "123"; // Kasa yetkili şifreniz
         let currentCustomer = null;
+
+        function verifyMasterLogin() {
+            const pass = document.getElementById('masterPassInput').value;
+            if (pass !== STAFF_PASSWORD) {
+                alert('Yetkili şifresi hatalı!');
+                return;
+            }
+            // Şifre doğruysa giriş ekranını gizle, müşteri panelini aç ve QR kod kontrolünü başlat
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('panelSection').classList.remove('hidden');
+            initMerkez();
+        }
 
         async function initMerkez() {
             const urlParams = new URLSearchParams(window.location.search);
             const phone = urlParams.get('phone');
 
             if (!phone) {
-                document.getElementById('loadingInfo').innerText = "Lütfen müşteri QR kodunu okutunuz.";
+                document.getElementById('loadingInfo').innerText = "Lütfen müşterinin QR kodunu okutunuz.";
                 return;
             }
 
@@ -113,12 +134,6 @@
 
         async function addPoints() {
             const amountInput = document.getElementById('receiptAmount').value;
-            const pass = document.getElementById('staffPassAdd').value;
-
-            if (pass !== STAFF_PASSWORD) {
-                alert('Yetkili şifresi hatalı!');
-                return;
-            }
 
             const totalAmount = parseFloat(amountInput);
             if (isNaN(totalAmount) || totalAmount <= 0) {
@@ -126,7 +141,6 @@
                 return;
             }
 
-            // 10 TL = 1 Puan hesabı
             const earnedPoints = Math.floor(totalAmount / 10);
             if (earnedPoints <= 0) {
                 alert('Bu tutar puan kazanmak için çok düşük (Minimum 10 TL gerekli).');
@@ -150,13 +164,6 @@
         }
 
         async function redeemReward() {
-            const pass = document.getElementById('staffPassRedeem').value;
-
-            if (pass !== STAFF_PASSWORD) {
-                alert('Yetkili şifresi hatalı!');
-                return;
-            }
-
             let currentPoints = currentCustomer.points || 0;
             const targetPoints = 200;
 
@@ -165,7 +172,6 @@
                 return;
             }
 
-            // 200 puan düşülür, artan küsurat cüzdanda kalır (Örn: 206 - 200 = 6)
             let remainingPoints = currentPoints - targetPoints;
 
             let { error } = await client
@@ -181,8 +187,6 @@
             alert('Ödül başarıyla verildi! Kalan ' + remainingPoints + ' puan müşterinin cüzdanında bırakıldı.');
             location.reload();
         }
-
-        initMerkez();
     </script>
 </body>
 </html>
