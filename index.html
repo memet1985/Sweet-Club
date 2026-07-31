@@ -235,6 +235,7 @@
             qrInitialized = true;
         }
 
+        // Müşteri ekranı açıkken kasadan puan eklendiğinde veya ödül düşüldüğünde anlık güncellenir
         setInterval(async () => {
             const savedPhone = localStorage.getItem('sweetUserPhone');
             if (savedPhone) {
