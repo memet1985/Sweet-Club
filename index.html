@@ -133,16 +133,6 @@
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const targetPoints = 200;
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js').then(function(registration) {
-                    console.log('ServiceWorker başarıyla kaydedildi.');
-                }, function(err) {
-                    console.log('ServiceWorker kayıt hatası: ', err);
-                });
-            });
-        }
-
         function formatBirthdate(input) {
             let v = input.value.replace(/\D/g, '');
             if (v.length > 2) {
@@ -152,15 +142,6 @@
                 v = v.substring(0, 5) + '/' + v.substring(5, 9);
             }
             input.value = v;
-        }
-
-        async function requestNotificationPermission() {
-            if ("Notification" in window && "serviceWorker" in navigator) {
-                const permission = await Notification.requestPermission();
-                if (permission === "granted") {
-                    console.log("Bildirim izni verildi.");
-                }
-            }
         }
 
         async function checkUser() {
@@ -194,7 +175,6 @@
                 return;
             }
 
-            // Cinsiyet ve Doğum Tarihi zorunluluk kontrolü
             if (!gender) {
                 alert('Lütfen cinsiyet seçimini yapınız.');
                 return;
@@ -227,7 +207,6 @@
             }
 
             localStorage.setItem('sweetUserPhone', phone);
-            requestNotificationPermission();
             checkUser();
         }
 
