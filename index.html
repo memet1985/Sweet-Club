@@ -32,28 +32,28 @@
 
     <main class="max-w-md w-full mx-auto p-4 flex-grow flex flex-col justify-center space-y-6">
 
-        <!-- KAYIT EKRANI -->
+        <!-- KAYIT / GİRİŞ EKRANI -->
         <div id="registerSection" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-4">
             <div class="text-center space-y-1">
                 <h2 class="text-xl font-bold text-amber-200">Aramıza Hoş Geldin! 🧇</h2>
                 <p class="text-xs text-gray-400">Özel hediyeler kazanmak için hemen kayıt ol.</p>
                 <div class="inline-block bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] px-3 py-1 rounded-full mt-2 font-medium">
-                    ✨ Sayfana giriş için telefon numaran yeterli!
+                    ✨ Daha önce kaydın varsa sadece telefon numaranla giriş yapabilirsin!
                 </div>
             </div>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Ad Soyad</label>
-                    <input type="text" id="regName" placeholder="Adınız Soyadınız" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Telefon Numarası</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Telefon Numarası <span class="text-amber-400">*</span></label>
                     <input type="tel" id="regPhone" placeholder="05XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                     <p class="text-[10px] text-gray-400 mt-1">Başında 0 olacak şekilde tam 11 haneli giriniz.</p>
                 </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Ad Soyad <span class="text-gray-500 text-[10px]">(Sadece yeni üyelikler için)</span></label>
+                    <input type="text" id="regName" placeholder="Adınız Soyadınız" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Cinsiyet <span class="text-amber-400">*</span></label>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Cinsiyet</label>
                         <select id="regGender" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                             <option value="">Seçiniz</option>
                             <option value="Kadın">Kadın</option>
@@ -62,7 +62,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Doğum Tarihi <span class="text-amber-400">*</span></label>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Doğum Tarihi</label>
                         <input type="text" id="regBirthdate" placeholder="gg/aa/yyyy" maxlength="10" oninput="formatBirthdate(this)" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                     </div>
                 </div>
@@ -120,6 +120,10 @@
                 </div>
                 <p class="text-xs text-gray-400 mt-3 text-center">Toplam 200 puana ulaş, <strong class="text-amber-300">Büyük Ödülü</strong> kazan!</p>
             </div>
+            
+            <div class="text-center">
+                <button onclick="logoutUser()" class="text-xs text-red-400 hover:text-red-300 underline cursor-pointer">Hesaptan Çıkış Yap</button>
+            </div>
         </div>
     </main>
 
@@ -160,46 +164,47 @@
         }
 
         async function registerUser() {
-            const name = document.getElementById('regName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
+            const name = document.getElementById('regName').value.trim();
             const gender = document.getElementById('regGender').value;
             const birthdate = document.getElementById('regBirthdate').value.trim();
-
-            if (!name) {
-                alert('Lütfen ad ve soyadınızı giriniz.');
-                return;
-            }
 
             if (phone.length !== 11) {
                 alert('Telefon numarası eksik veya fazla! Lütfen başında 0 olacak şekilde tam 11 haneli giriniz (Örn: 05XXXXXXXXX).');
                 return;
             }
 
+            // Veritabanında bu numara kayıtlı mı kontrol et
+            let { data: existingUser } = await client.from('customers').select('*').eq('phone', phone).single();
+
+            if (existingUser) {
+                // Kayıtlıysa direkt giriş yap
+                localStorage.setItem('sweetUserPhone', phone);
+                checkUser();
+                return;
+            }
+
+            // Kayıtlı değilse diğer alanların doluluğunu kontrol et ve yeni kayıt oluştur
+            if (!name) {
+                alert('Lütfen ad ve soyadınızı giriniz.');
+                return;
+            }
             if (!gender) {
                 alert('Lütfen cinsiyet seçimini yapınız.');
                 return;
             }
-
             if (!birthdate || birthdate.length < 10) {
                 alert('Lütfen doğum tarihinizi gg/aa/yyyy formatında eksiksiz giriniz.');
                 return;
             }
 
-            let { data: existingUser } = await client.from('customers').select('*').eq('phone', phone).single();
-
-            let result;
-            if (existingUser) {
-                alert('Bu telefon numarası ile zaten kayıt bulunuyor. Hesabınıza giriş yapılıyor!');
-                result = { data: existingUser, error: null };
-            } else {
-                result = await client.from('customers').insert([{ 
-                    phone: phone, 
-                    name: name, 
-                    gender: gender, 
-                    birthdate: birthdate, 
-                    points: 0 
-                }]).select().single();
-            }
+            let result = await client.from('customers').insert([{ 
+                phone: phone, 
+                name: name, 
+                gender: gender, 
+                birthdate: birthdate, 
+                points: 0 
+            }]).select().single();
 
             if (result.error) {
                 alert('Kayıt sırasında bir hata oluştu: ' + result.error.message);
@@ -208,6 +213,11 @@
 
             localStorage.setItem('sweetUserPhone', phone);
             checkUser();
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('sweetUserPhone');
+            location.reload();
         }
 
         function updateUI(user) {
