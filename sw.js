@@ -1,6 +1,6 @@
 // Service Worker - Arka Plan Bildirim Dinleyicisi
 self.addEventListener('push', function(event) {
-    let data = { title: "Sweet Waffle", body: "Yeni bir bildiriminiz var!" };
+    let data = { title: "Sweet Waffle", body: "Hediyeni kazanmak için son adımlar!" };
     if (event.data) {
         try {
             data = event.data.json();
