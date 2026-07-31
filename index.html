@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sweet Sadakat Kulübü - Sweet Waffle</title>
+    <title>Sweet Waffle Loyalty Club</title>
+    
+    <!-- PWA / Ana Ekran Ekleme Meta Etiketleri -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sweet Waffle Loyalty Club">
+    <link rel="apple-touch-icon" href="logo.webp">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Sweet Waffle Loyalty Club">
+    <link rel="icon" sizes="192x192" href="logo.webp">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#171a21">
-    <link rel="apple-touch-icon" href="logo.webp">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #171a21; color: #f3f4f6; }
     </style>
@@ -24,227 +31,61 @@
                 <h1 class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-200 via-amber-400 to-[#d4975d] bg-clip-text text-transparent">Sweet Waffle</h1>
             </div>
             <div class="text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1.5 rounded-full">
-                Sadakat Kulübü
+                Loyalty Club
             </div>
         </div>
     </header>
 
-    <main class="max-w-md w-full mx-auto p-4 flex-grow flex flex-col justify-center space-y-6">
-
-        <!-- KAYIT / GİRİŞ EKRANI -->
-        <div id="registerSection" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-4">
-            <div class="text-center space-y-1">
-                <h2 class="text-xl font-bold text-amber-200">Aramıza Hoş Geldin! 🧇</h2>
-                <p class="text-xs text-gray-400">Özel hediyeler kazanmak için hemen kayıt ol.</p>
-                <div class="inline-block bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] px-3 py-1 rounded-full mt-2 font-medium">
-                    ✨ Daha önce kaydın varsa sadece telefon numaranla giriş yapabilirsin!
-                </div>
-            </div>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Telefon Numarası <span class="text-amber-400">*</span></label>
-                    <input type="tel" id="regPhone" placeholder="05XXXXXXXXX" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                    <p class="text-[10px] text-gray-400 mt-1">Başında 0 olacak şekilde tam 11 haneli giriniz.</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Ad Soyad <span class="text-gray-500 text-[10px]">(Sadece yeni üyelikler için)</span></label>
-                    <input type="text" id="regName" placeholder="Adınız Soyadınız" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Cinsiyet</label>
-                        <select id="regGender" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                            <option value="">Seçiniz</option>
-                            <option value="Kadın">Kadın</option>
-                            <option value="Erkek">Erkek</option>
-                            <option value="Belirtmek İstemiyorum">Diğer</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">Doğum Tarihi</label>
-                        <input type="text" id="regBirthdate" placeholder="gg/aa/yyyy" maxlength="10" oninput="formatBirthdate(this)" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                    </div>
-                </div>
-                <button onclick="registerUser()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
-                    Üye Ol / Giriş Yap
+    <main class="max-w-md w-full mx-auto p-4 flex-grow space-y-6">
+        <div class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 text-center space-y-4">
+            <h2 class="text-xl font-bold text-amber-200">Hoş Geldiniz! 🧇</h2>
+            <p class="text-xs text-gray-400">Telefon numaranızı girerek cüzdanınızdaki puanları görüntüleyebilirsiniz.</p>
+            
+            <div class="space-y-3 pt-2">
+                <input type="tel" id="customerPhone" placeholder="05XX XXX XX XX" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-center text-sm focus:outline-none focus:border-amber-500">
+                <button onclick="checkCustomerPoints()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md cursor-pointer">
+                    Puanlarımı Sorgula
                 </button>
             </div>
         </div>
 
-        <!-- ÜYE PANELİ -->
-        <div id="profileSection" class="hidden space-y-6">
-            <div class="bg-gradient-to-br from-[#703f1e] via-[#593014] to-[#3a1d0a] rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden border border-amber-900/40">
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <p class="text-amber-200/80 text-xs font-medium">Hoş Geldin,</p>
-                            <h2 id="displayUserName" class="text-xl font-bold tracking-tight text-amber-100">-</h2>
-                            <p id="displayUserPhone" class="text-[11px] text-amber-200/60">-</p>
-                        </div>
-                        <img src="logo.webp" alt="Logo" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400/40 shadow-lg bg-gray-800">
-                    </div>
-                    
-                    <div class="bg-black/25 backdrop-blur-md rounded-2xl p-4 flex justify-between items-center border border-amber-500/20 shadow-inner mt-4">
-                        <div>
-                            <p class="text-xs text-amber-200/70 uppercase tracking-wider font-semibold">Mevcut Puanın</p>
-                            <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 Puan</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-2xl">🥤</span>
-                            <p class="text-xs text-amber-100/90 mt-1">Ödüle <br><span id="remainingCount" class="font-bold text-amber-400">200 Puan</span> Kaldı!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- KİŞİSEL QR KOD ALANI -->
-            <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 text-center space-y-3">
-                <div>
-                    <h3 class="text-sm font-bold text-amber-200">Kişisel Kasa QR Kodum</h3>
-                    <p class="text-xs text-gray-400 mt-0.5">Kasada bu kodu okleterek işlemlerini hızlandırabilirsin.</p>
-                </div>
-                <div class="flex justify-center bg-white p-3 rounded-2xl w-fit mx-auto shadow-md">
-                    <div id="customerQRCode"></div>
-                </div>
-                <p class="text-[11px] text-amber-400/80 font-medium">Bu QR kod sadece sana özeldir.</p>
-            </div>
-
-            <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm font-semibold text-gray-300">Ödül İlerlemesi</span>
-                    <span id="progressText" class="text-xs font-bold text-amber-400">0 / 200 Puan</span>
-                </div>
-                <div class="w-full bg-gray-900 h-3 rounded-full overflow-hidden p-0.5 border border-gray-800">
-                    <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%;"></div>
-                </div>
-                <p class="text-xs text-gray-400 mt-3 text-center">Toplam 200 puana ulaş, <strong class="text-amber-300">Büyük Ödülü</strong> kazan!</p>
-            </div>
-            
-            <div class="text-center">
-                <button onclick="logoutUser()" class="text-xs text-red-400 hover:text-red-300 underline cursor-pointer">Hesaptan Çıkış Yap</button>
-            </div>
+        <div id="customerResultCard" class="hidden bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-3 text-center">
+            <p class="text-xs text-gray-400">Müşteri:</p>
+            <h3 id="cName" class="text-lg font-bold text-amber-100">-</h3>
+            <p class="text-xs text-gray-400 mt-2">Cüzdan Puanınız:</p>
+            <p id="cPoints" class="text-3xl font-extrabold text-amber-400">0 Puan</p>
+            <p class="text-[11px] text-gray-500 pt-2">Her 200 puanda bir ödül kazanabilirsiniz!</p>
         </div>
     </main>
 
     <footer class="w-full text-center py-4 text-xs text-gray-500 border-t border-gray-800/60">
-        &copy; 2026 Sweet Waffle - Sweet Sadakat Kulübü. Tüm Hakları Saklıdır.
+        &copy; 2026 Sweet Waffle - Loyalty Club
     </footer>
 
     <script>
         const SUPABASE_URL = 'https://yatgnoiybbjvmreikeqs.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const targetPoints = 200;
 
-        function formatBirthdate(input) {
-            let v = input.value.replace(/\D/g, '');
-            if (v.length > 2) v = v.substring(0, 2) + '/' + v.substring(2);
-            if (v.length > 5) v = v.substring(0, 5) + '/' + v.substring(5, 9);
-            input.value = v;
-        }
-
-        async function checkUser() {
-            const savedPhone = localStorage.getItem('sweetUserPhone');
-            if (savedPhone) {
-                let { data, error } = await client.from('customers').select('*').eq('phone', savedPhone).single();
-                if (data) {
-                    document.getElementById('registerSection').classList.add('hidden');
-                    document.getElementById('profileSection').classList.remove('hidden');
-                    updateUI(data);
-                    generateUserQRCode(data.phone);
-                } else {
-                    localStorage.removeItem('sweetUserPhone');
-                }
-            }
-        }
-
-        async function registerUser() {
-            const phone = document.getElementById('regPhone').value.trim();
-            const name = document.getElementById('regName').value.trim();
-            const gender = document.getElementById('regGender').value;
-            const birthdate = document.getElementById('regBirthdate').value.trim();
-
-            if (phone.length !== 11) {
-                alert('Telefon numarası eksik veya fazla! Lütfen başında 0 olacak şekilde tam 11 haneli giriniz.');
+        async function checkCustomerPoints() {
+            const phone = document.getElementById('customerPhone').value.trim();
+            if (!phone) {
+                alert('Lütfen telefon numaranızı giriniz.');
                 return;
             }
 
-            let { data: existingUser } = await client.from('customers').select('*').eq('phone', phone).single();
+            let { data, error } = await client.from('customers').select('*').eq('phone', phone).single();
 
-            if (existingUser) {
-                localStorage.setItem('sweetUserPhone', phone);
-                checkUser();
+            if (error || !data) {
+                alert('Bu telefon numarasına ait kayıt bulunamadı!');
+                document.getElementById('customerResultCard').classList.add('hidden');
                 return;
             }
 
-            if (!name) { alert('Lütfen ad ve soyadınızı giriniz.'); return; }
-            if (!gender) { alert('Lütfen cinsiyet seçimini yapınız.'); return; }
-            if (!birthdate || birthdate.length < 10) { alert('Lütfen doğum tarihinizi gg/aa/yyyy formatında giriniz.'); return; }
-
-            let result = await client.from('customers').insert([{ 
-                phone: phone, name: name, gender: gender, birthdate: birthdate, points: 0 
-            }]).select().single();
-
-            if (result.error) {
-                alert('Kayıt sırasında hata: ' + result.error.message);
-                return;
-            }
-
-            localStorage.setItem('sweetUserPhone', phone);
-            checkUser();
+            document.getElementById('cName').innerText = data.name;
+            document.getElementById('cPoints').innerText = (data.points || 0) + " Puan";
+            document.getElementById('customerResultCard').classList.remove('hidden');
         }
-
-        function logoutUser() {
-            localStorage.removeItem('sweetUserPhone');
-            location.reload();
-        }
-
-        function updateUI(user) {
-            let actualPoints = user.points || 0; 
-            
-            document.getElementById('userPoints').innerText = actualPoints + " Puan";
-            document.getElementById('displayUserName').innerText = user.name;
-            document.getElementById('displayUserPhone').innerText = user.phone;
-
-            let progressPoints = actualPoints > targetPoints ? targetPoints : actualPoints;
-            let remaining = targetPoints - actualPoints;
-            
-            let remainingText = "";
-            if (actualPoints >= targetPoints) {
-                remainingText = "Ödüle Hazır!";
-            } else if (remaining > 0) {
-                remainingText = remaining + " Puan";
-            }
-
-            document.getElementById('remainingCount').innerText = remainingText;
-            document.getElementById('progressText').innerText = progressPoints + " / " + targetPoints + " Puan";
-            document.getElementById('progressBar').style.width = ((progressPoints / targetPoints) * 100) + "%";
-        }
-
-        let qrInitialized = false;
-        function generateUserQRCode(phone) {
-            const qrContainer = document.getElementById('customerQRCode');
-            if (qrInitialized) return; 
-            qrContainer.innerHTML = "";
-            
-            const targetUrl = window.location.origin + "/merkez.html?phone=" + phone;
-
-            new QRCode(qrContainer, {
-                text: targetUrl, width: 130, height: 130, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
-            });
-            qrInitialized = true;
-        }
-
-        // Müşteri ekranı açıkken kasadan puan eklendiğinde veya ödül düşüldüğünde anlık güncellenir
-        setInterval(async () => {
-            const savedPhone = localStorage.getItem('sweetUserPhone');
-            if (savedPhone) {
-                let { data } = await client.from('customers').select('*').eq('phone', savedPhone).single();
-                if (data) updateUI(data);
-            }
-        }, 3000);
-
-        checkUser();
     </script>
 </body>
 </html>
