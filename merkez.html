@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <!-- MÜŞTERİ BİLGİ VE İŞLEM PANELİ (Başlangıçta Gizli) -->
+        <!-- MÜŞTERİ BİLGİ VE İŞLEM PANELİ -->
         <div id="panelSection" class="hidden bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-5">
             <div id="loadingInfo" class="text-center text-gray-400 text-sm py-8">
                 Müşteri bilgileri yükleniyor veya QR kod okutulmadı...
@@ -92,7 +92,7 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        const STAFF_PASSWORD = "123"; // Kasa yetkili şifreniz
+        const STAFF_PASSWORD = "123";
         let currentCustomer = null;
 
         function verifyMasterLogin() {
@@ -171,7 +171,7 @@
                 return;
             }
 
-            // Sadece 200 puan düşülür, kalanı cüzdanda bırakılır (Örn: 206 - 200 = 6)
+            // Sadece 200 puan düşülür, kalan küsurat cüzdanda bırakılır (Örn: 206 - 200 = 6)
             let remainingPoints = currentPoints - targetPoints;
 
             let { error } = await client
