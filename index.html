@@ -6,6 +6,8 @@
     <title>Sweet Sadakat Kulübü - Sweet Waffle</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- QR Kod Üretmek İçin Kütüphane -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#171a21">
@@ -44,6 +46,21 @@
                     <label class="block text-xs font-medium text-gray-300 mb-1">Telefon Numarası</label>
                     <input type="tel" id="regPhone" placeholder="05XX XXX XX XX" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                 </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Cinsiyet</label>
+                        <select id="regGender" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                            <option value="">Seçiniz</option>
+                            <option value="Kadın">Kadın</option>
+                            <option value="Erkek">Erkek</option>
+                            <option value="Belirtmek İstemiyorum">Diğer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Doğum Tarihi</label>
+                        <input type="text" id="regBirthdate" placeholder="gg/aa/yyyy" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
                 <button onclick="registerUser()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
                     Üye Ol / Giriş Yap
                 </button>
@@ -74,6 +91,18 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- KİŞİSEL QR KOD ALANI (Kasa için hızlı tanıma) -->
+            <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 text-center space-y-3">
+                <div>
+                    <h3 class="text-sm font-bold text-amber-200">Kişisel Kasa QR Kodum</h3>
+                    <p class="text-xs text-gray-400 mt-0.5">Kasada bu kodu okleterek işlemlerini hızlandırabilirsin.</p>
+                </div>
+                <div class="flex justify-center bg-white p-3 rounded-2xl w-fit mx-auto shadow-md">
+                    <div id="customerQRCode"></div>
+                </div>
+                <p class="text-[11px] text-amber-400/80 font-medium">Bu QR kod sadece sana özeldir.</p>
             </div>
 
             <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800">
@@ -107,6 +136,7 @@
                     document.getElementById('registerSection').classList.add('hidden');
                     document.getElementById('profileSection').classList.remove('hidden');
                     updateUI(data);
+                    generateUserQRCode(data.phone);
                 } else {
                     localStorage.removeItem('sweetUserPhone');
                 }
@@ -116,6 +146,8 @@
         async function registerUser() {
             const name = document.getElementById('regName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
+            const gender = document.getElementById('regGender').value;
+            const birthdate = document.getElementById('regBirthdate').value.trim();
 
             if (!name || phone.length < 10) {
                 alert('Lütfen geçerli bir ad-soyad ve telefon numarası giriniz.');
@@ -126,9 +158,9 @@
 
             let result;
             if (existingUser) {
-                result = await client.from('customers').update({ name: name }).eq('phone', phone).select().single();
+                result = await client.from('customers').update({ name: name, gender: gender, birthdate: birthdate }).eq('phone', phone).select().single();
             } else {
-                result = await client.from('customers').insert([{ phone: phone, name: name, points: 0 }]).select().single();
+                result = await client.from('customers').insert([{ phone: phone, name: name, gender: gender, birthdate: birthdate, points: 0 }]).select().single();
             }
 
             if (result.error) {
@@ -152,6 +184,27 @@
             document.getElementById('remainingCount').innerText = remaining > 0 ? remaining + " Puan" : "Ödüle Hazır!";
             document.getElementById('progressText').innerText = currentPoints + " / " + targetPoints + " Puan";
             document.getElementById('progressBar').style.width = ((currentPoints / targetPoints) * 100) + "%";
+        }
+
+        let qrInitialized = false;
+        function generateUserQRCode(phone) {
+            const qrContainer = document.getElementById('customerQRCode');
+            if (qrInitialized) return; // Tekrar tekrar üretilmesini önle
+            qrContainer.innerHTML = "";
+            
+            // Merkez paneline direkt bu telefon numarasını parametre olarak ileten veya otomatik aratan link yapısı
+            // Merkez sayfanızın linkini buraya yazabilirsiniz, örn: merkez.html?phone=...
+            const targetUrl = window.location.origin + "/merkez.html?phone=" + phone;
+
+            new QRCode(qrContainer, {
+                text: targetUrl,
+                width: 130,
+                height: 130,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            qrInitialized = true;
         }
 
         setInterval(async () => {
