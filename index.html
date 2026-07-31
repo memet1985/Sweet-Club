@@ -129,11 +129,11 @@
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const targetPoints = 200;
 
-        // Service Worker Kaydı (Bildirimlerin arka planda çalışabilmesi için şarttır)
+        // Service Worker Kaydı
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('sw.js').then(function(registration) {
-                    console.log('ServiceWorker başarıyla kaydedildi: ', registration.scope);
+                    console.log('ServiceWorker başarıyla kaydedildi.');
                 }, function(err) {
                     console.log('ServiceWorker kayıt hatası: ', err);
                 });
@@ -178,7 +178,7 @@
         async function registerUser() {
             const name = document.getElementById('regName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
-            const gender = document.getElementById('regGender').value;
+            const gender = document.getElementById('regGender.value') ? document.getElementById('regGender').value : document.getElementById('regGender').value;
             const birthdate = document.getElementById('regBirthdate').value.trim();
 
             if (!name) {
