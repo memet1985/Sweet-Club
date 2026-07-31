@@ -73,9 +73,9 @@
             </div>
 
             <div class="border-t border-gray-800 pt-4 space-y-3">
-                <h3 class="text-xs font-bold text-red-400 uppercase tracking-wider">Ödül Kullanımı (Puan Sıfırlama)</h3>
+                <h3 class="text-xs font-bold text-red-400 uppercase tracking-wider">Ödül Kullanımı (200 Puan Düşümü)</h3>
                 <button onclick="useReward()" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/40 font-bold py-3 rounded-xl text-sm transition cursor-pointer">
-                    Ödülü Ver ve Puanı Sıfırla
+                    Ödülü Ver ve Kalanı Cüzdanda Bırak
                 </button>
             </div>
         </div>
@@ -91,19 +91,14 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        const STAFF_PIN = "1985"; // Kasa şifresi (İstediğiniz gibi değiştirebilirsiniz)
+        const STAFF_PIN = "1985"; 
         let activeCustomer = null;
 
-        // Sayfa açıldığında URL'de telefon var mı kontrol et ve QR ile gelinip gelinmediğine bak
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const phone = urlParams.get('phone');
             if (phone) {
-                // QR ile gelindiğinde şifre modalı açık kalır, doğru şifre girilince aranır.
                 document.getElementById('searchPhone').value = phone;
-            } else {
-                // Manuel giriş yapıldıysa şifre modalını gizleyebiliriz veya her halükarda şifre isteyebiliriz. 
-                // İstediğiniz gibi doğrudan şifre ekranı ile başlar.
             }
         });
 
@@ -111,7 +106,6 @@
             const enteredPin = document.getElementById('modalPin').value.trim();
             if (enteredPin === STAFF_PIN) {
                 document.getElementById('authModal').style.display = 'none';
-                // Eğer URL'de telefon varsa otomatik aramayı tetikle
                 const urlParams = new URLSearchParams(window.location.search);
                 const phone = urlParams.get('phone');
                 if (phone) {
@@ -183,21 +177,26 @@
         async function useReward() {
             if (!activeCustomer) return;
 
-            if ((activeCustomer.points || 0) < 100) {
-                alert('⚠️ Müşteri puanı 100’den az, ödül verilemez!');
+            const currentPoints = activeCustomer.points || 0;
+            const rewardCost = 200;
+
+            if (currentPoints < rewardCost) {
+                alert('⚠️ Müşterinin ödül için yeterli (200) puanı yok!');
                 return;
             }
 
-            let { error } = await client.from('customers').update({ points: 0 }).eq('phone', activeCustomer.phone);
+            const remainingPoints = currentPoints - rewardCost;
+
+            let { error } = await client.from('customers').update({ points: remainingPoints }).eq('phone', activeCustomer.phone);
 
             if (error) {
                 alert('İşlem başarısız: ' + error.message);
                 return;
             }
 
-            activeCustomer.points = 0;
-            document.getElementById('resPoints').innerText = "0 Puan";
-            alert('✅ Ödül onaylandı! Müşterinin puanı sıfırlandı.');
+            activeCustomer.points = remainingPoints;
+            document.getElementById('resPoints').innerText = remainingPoints + " Puan";
+            alert('✅ Ödül başarıyla verildi! Kalan ' + remainingPoints + ' puan müşterinin cüzdanında bırakıldı.');
         }
     </script>
 </body>
