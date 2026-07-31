@@ -129,6 +129,17 @@
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const targetPoints = 200;
 
+        // Service Worker Kaydı (Bildirimlerin arka planda çalışabilmesi için şarttır)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js').then(function(registration) {
+                    console.log('ServiceWorker başarıyla kaydedildi: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker kayıt hatası: ', err);
+                });
+            });
+        }
+
         function formatBirthdate(input) {
             let v = input.value.replace(/\D/g, '');
             if (v.length > 2) {
@@ -175,7 +186,6 @@
                 return;
             }
 
-            // Kesin 11 haneli kontrolü
             if (phone.length !== 11) {
                 alert('Telefon numarası eksik veya fazla! Lütfen başında 0 olacak şekilde tam 11 haneli giriniz (Örn: 05XXXXXXXXX).');
                 return;
