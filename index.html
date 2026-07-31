@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sweet Waffle - Merkez Yönetim Paneli</title>
+    <title>Sweet Sadakat Kulübü - Sweet Waffle</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#171a21">
     <style>
         body { font-family: 'Poppins', sans-serif; background: #171a21; color: #f3f4f6; }
     </style>
@@ -19,160 +21,148 @@
                 <img src="logo.webp" alt="Sweet Waffle Logo" class="w-10 h-10 rounded-full object-cover border border-amber-500/30 shadow-md bg-gray-800">
                 <h1 class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-200 via-amber-400 to-[#d4975d] bg-clip-text text-transparent">Sweet Waffle</h1>
             </div>
-            <div class="text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-full">
-                Merkez / Kasa Paneli
+            <div class="text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1.5 rounded-full">
+                Sadakat Kulübü
             </div>
         </div>
     </header>
 
-    <main class="max-w-md w-full mx-auto p-4 flex-grow space-y-6">
+    <main class="max-w-md w-full mx-auto p-4 flex-grow flex flex-col justify-center space-y-6">
 
-        <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-3">
-            <h2 class="text-sm font-bold text-amber-200">Müşteri Arama (Telefon ile)</h2>
-            <div class="flex space-x-2">
-                <input type="tel" id="searchPhone" placeholder="05XX XXX XX XX" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                <button onclick="searchCustomer()" class="bg-amber-500 hover:bg-amber-600 text-gray-950 font-bold px-5 rounded-xl text-sm transition cursor-pointer">Ara</button>
+        <!-- KAYIT EKRANI -->
+        <div id="registerSection" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-4">
+            <div class="text-center space-y-1">
+                <h2 class="text-xl font-bold text-amber-200">Aramıza Hoş Geldin! 🧇</h2>
+                <p class="text-xs text-gray-400">Ücretsiz kova ve limonata kazanmak için hemen kayıt ol.</p>
             </div>
-        </div>
-
-        <div id="customerCard" class="hidden bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-4">
-            <div class="bg-[#171a21] p-4 rounded-2xl border border-gray-800 space-y-1">
-                <p class="text-xs text-gray-400">Müşteri Adı Soyadı:</p>
-                <h3 id="resName" class="text-lg font-bold text-amber-100">-</h3>
-                <p class="text-xs text-gray-400 mt-2">Telefon:</p>
-                <p id="resPhone" class="text-sm font-semibold text-gray-300">-</p>
-                <p class="text-xs text-gray-400 mt-2">Mevcut Puan:</p>
-                <p id="resPoints" class="text-2xl font-extrabold text-amber-400">0 Puan</p>
-            </div>
-
-            <div class="border-t border-gray-800 pt-4 space-y-3">
-                <h3 class="text-xs font-bold text-amber-200 uppercase tracking-wider">Fiş Tutarı ile Puan Ekle (10 TL = 1 Puan)</h3>
+            <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Toplam Fiş Tutarı (TL)</label>
-                    <input type="number" id="receiptAmount" placeholder="Örn: 350" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Ad Soyad</label>
+                    <input type="text" id="regName" placeholder="Adınız Soyadınız" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
-                    <input type="password" id="staffPin" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">Telefon Numarası</label>
+                    <input type="tel" id="regPhone" placeholder="05XX XXX XX XX" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                 </div>
-                <button onclick="addPoints()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md cursor-pointer">
-                    Puanı Hesaba Ekle
-                </button>
-            </div>
-
-            <div class="border-t border-gray-800 pt-4 space-y-3">
-                <h3 class="text-xs font-bold text-red-400 uppercase tracking-wider">Ödül Kullanımı (Puan Sıfırlama)</h3>
-                <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
-                    <input type="password" id="rewardStaffPin" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-                </div>
-                <button onclick="useReward()" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/40 font-bold py-3 rounded-xl text-sm transition cursor-pointer">
-                    Ödülü Ver ve Puanı Sıfırla
+                <button onclick="registerUser()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
+                    Üye Ol / Giriş Yap
                 </button>
             </div>
         </div>
 
+        <!-- ÜYE PANELİ -->
+        <div id="profileSection" class="hidden space-y-6">
+            <div class="bg-gradient-to-br from-[#703f1e] via-[#593014] to-[#3a1d0a] rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden border border-amber-900/40">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="text-amber-200/80 text-xs font-medium">Hoş Geldin,</p>
+                            <h2 id="displayUserName" class="text-xl font-bold tracking-tight text-amber-100">-</h2>
+                            <p id="displayUserPhone" class="text-[11px] text-amber-200/60">-</p>
+                        </div>
+                        <img src="logo.webp" alt="Logo" class="w-12 h-12 rounded-full object-cover border-2 border-amber-400/40 shadow-lg bg-gray-800">
+                    </div>
+                    
+                    <div class="bg-black/25 backdrop-blur-md rounded-2xl p-4 flex justify-between items-center border border-amber-500/20 shadow-inner mt-4">
+                        <div>
+                            <p class="text-xs text-amber-200/70 uppercase tracking-wider font-semibold">Mevcut Puanın</p>
+                            <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 / 100</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-2xl">🥤</span>
+                            <p class="text-xs text-amber-100/90 mt-1">Ödüle <br><span id="remainingCount" class="font-bold text-amber-400">100 Puan</span> Kaldı!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-gray-300">Ödül İlerlemesi</span>
+                    <span id="progressText" class="text-xs font-bold text-amber-400">0 / 100 Puan</span>
+                </div>
+                <div class="w-full bg-gray-900 h-3 rounded-full overflow-hidden p-0.5 border border-gray-800">
+                    <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%;"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-3 text-center">Toplam 100 puana ulaş, <strong class="text-amber-300">Ücretsiz Kova ve Limonata</strong> kazan!</p>
+            </div>
+        </div>
     </main>
 
     <footer class="w-full text-center py-4 text-xs text-gray-500 border-t border-gray-800/60">
-        &copy; 2026 Sweet Waffle - Merkez Yönetim Paneli
+        &copy; 2026 Sweet Waffle - Sweet Sadakat Kulübü. Tüm Hakları Saklıdır.
     </footer>
 
     <script>
         const SUPABASE_URL = 'https://yatgnoiybbjvmreikeqs.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        const STAFF_PIN = "1985"; 
-        let activeCustomer = null;
+        const targetPoints = 100;
 
-        async function searchCustomer() {
-            const phone = document.getElementById('searchPhone').value.trim();
-            if (!phone) {
-                alert('Lütfen telefon numarası giriniz.');
-                return;
+        async function checkUser() {
+            const savedPhone = localStorage.getItem('sweetUserPhone');
+            if (savedPhone) {
+                let { data, error } = await client.from('customers').select('*').eq('phone', savedPhone).single();
+                if (data) {
+                    document.getElementById('registerSection').classList.add('hidden');
+                    document.getElementById('profileSection').classList.remove('hidden');
+                    updateUI(data);
+                } else {
+                    localStorage.removeItem('sweetUserPhone');
+                }
             }
-
-            let { data, error } = await client.from('customers').select('*').eq('phone', phone).single();
-
-            if (error || !data) {
-                alert('Bu telefon numarasına ait kayıtlı müşteri bulunamadı!');
-                document.getElementById('customerCard').classList.add('hidden');
-                activeCustomer = null;
-                return;
-            }
-
-            activeCustomer = data;
-            document.getElementById('resName').innerText = data.name;
-            document.getElementById('resPhone').innerText = data.phone;
-            document.getElementById('resPoints').innerText = (data.points || 0) + " Puan";
-            document.getElementById('customerCard').classList.remove('hidden');
         }
 
-        async function addPoints() {
-            if (!activeCustomer) return;
-            const amountInput = document.getElementById('receiptAmount').value;
-            const pinInput = document.getElementById('staffPin').value;
-            const amount = parseFloat(amountInput);
+        async function registerUser() {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
 
-            if (isNaN(amount) || amount <= 0) {
-                alert('Lütfen geçerli bir fiş tutarı giriniz.');
+            if (!name || phone.length < 10) {
+                alert('Lütfen geçerli bir ad-soyad ve telefon numarası giriniz.');
                 return;
             }
 
-            if (pinInput !== STAFF_PIN) {
-                alert('Hatalı Kasa Yetkili Şifresi!');
+            let { data: existingUser } = await client.from('customers').select('*').eq('phone', phone).single();
+
+            let result;
+            if (existingUser) {
+                result = await client.from('customers').update({ name: name }).eq('phone', phone).select().single();
+            } else {
+                result = await client.from('customers').insert([{ phone: phone, name: name, points: 0 }]).select().single();
+            }
+
+            if (result.error) {
+                alert('Kayıt sırasında bir hata oluştu: ' + result.error.message);
                 return;
             }
 
-            const earnedPoints = Math.floor(amount / 10);
-            if (earnedPoints <= 0) {
-                alert('Girilen tutar için en az 1 puan kazanılmalıdır (Minimum 10 TL).');
-                return;
-            }
-
-            const newTotalPoints = (activeCustomer.points || 0) + earnedPoints;
-
-            let { error } = await client.from('customers').update({ points: newTotalPoints }).eq('phone', activeCustomer.phone);
-
-            if (error) {
-                alert('Puan eklenirken hata oluştu: ' + error.message);
-                return;
-            }
-
-            activeCustomer.points = newTotalPoints;
-            document.getElementById('resPoints').innerText = newTotalPoints + " Puan";
-            document.getElementById('receiptAmount').value = '';
-            document.getElementById('staffPin').value = '';
-            alert('🚀 Başarıyla ' + earnedPoints + ' puan eklendi!');
+            localStorage.setItem('sweetUserPhone', phone);
+            checkUser();
         }
 
-        async function useReward() {
-            if (!activeCustomer) return;
-            const pinInput = document.getElementById('rewardStaffPin').value;
+        function updateUI(user) {
+            let currentPoints = user.points || 0;
+            if (currentPoints > targetPoints) currentPoints = targetPoints;
 
-            if (pinInput !== STAFF_PIN) {
-                alert('Hatalı Kasa Yetkili Şifresi!');
-                return;
-            }
-
-            if ((activeCustomer.points || 0) < 100) {
-                alert('⚠️ Müşteri puanı 100’den az, ödül verilemez!');
-                return;
-            }
-
-            let { error } = await client.from('customers').update({ points: 0 }).eq('phone', activeCustomer.phone);
-
-            if (error) {
-                alert('İşlem başarısız: ' + error.message);
-                return;
-            }
-
-            activeCustomer.points = 0;
-            document.getElementById('resPoints').innerText = "0 Puan";
-            document.getElementById('rewardStaffPin').value = '';
-            alert('✅ Ödül onaylandı! Müşterinin puanı sıfırlandı.');
+            document.getElementById('displayUserName').innerText = user.name;
+            document.getElementById('displayUserPhone').innerText = user.phone;
+            document.getElementById('userPoints').innerText = currentPoints + " / " + targetPoints;
+            
+            let remaining = targetPoints - currentPoints;
+            document.getElementById('remainingCount').innerText = remaining > 0 ? remaining + " Puan" : "Ödüle Hazır!";
+            document.getElementById('progressText').innerText = currentPoints + " / " + targetPoints + " Puan";
+            document.getElementById('progressBar').style.width = ((currentPoints / targetPoints) * 100) + "%";
         }
+
+        setInterval(async () => {
+            const savedPhone = localStorage.getItem('sweetUserPhone');
+            if (savedPhone) {
+                let { data } = await client.from('customers').select('*').eq('phone', savedPhone).single();
+                if (data) updateUI(data);
+            }
+        }, 3000);
+
+        checkUser();
     </script>
 </body>
 </html>
