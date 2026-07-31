@@ -54,8 +54,8 @@
                         <p id="userPoints" class="text-3xl font-extrabold mt-1 text-amber-400">0 / 100</p>
                     </div>
                     <div class="text-right">
-                        <span class="text-2xl">🎁</span>
-                        <p class="text-xs text-amber-100/90 mt-1">Ücretsiz Ürüne <br><span id="remainingCount" class="font-bold text-amber-400">100 Puan</span> Kaldı!</p>
+                        <span class="text-2xl">🥤</span>
+                        <p class="text-xs text-amber-100/90 mt-1">Ödüle <br><span id="remainingCount" class="font-bold text-amber-400">100 Puan</span> Kaldı!</p>
                     </div>
                 </div>
             </div>
@@ -70,10 +70,10 @@
             <div class="w-full bg-gray-900 h-3 rounded-full overflow-hidden p-0.5 border border-gray-800">
                 <div id="progressBar" class="bg-gradient-to-r from-amber-600 to-amber-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%;"></div>
             </div>
-            <p class="text-xs text-gray-400 mt-3 text-center">Toplam 100 puana ulaş, <strong class="text-amber-300">Ücretsiz Ürün</strong> ödülünü kap!</p>
+            <p class="text-xs text-gray-400 mt-3 text-center">Toplam 100 puana ulaş, <strong class="text-amber-300">Ücretsiz Kova ve Limonata</strong> kazan!</p>
         </div>
 
-        <!-- Action Button -->
+        <!-- Action Button (Puan Ekleme) -->
         <div class="text-center">
             <button onclick="openModal()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-4 px-6 rounded-2xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center space-x-3 cursor-pointer">
                 <svg class="w-6 h-6 text-gray-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8H2a1 1 0 00-1 1v3a1 1 0 001 1h3m10-5h2a1 1 0 011 1v3a1 1 0 01-1 1h-2m-6 0H8m0 0V8m0 4v4m0 0H4a1 1 0 01-1-1v-3a1 1 0 011-1h1m4 4v3m0 0h4m-4 0h-4"></path></svg>
@@ -81,32 +81,33 @@
             </button>
         </div>
 
-        <!-- Puan Sistemi Bilgisi -->
-        <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800">
-            <h3 class="text-sm font-semibold text-gray-300 mb-3">Puan Kazanma Sistemi</h3>
-            <div class="text-xs text-gray-400 mb-4 bg-[#171a21] p-3 rounded-xl border border-gray-800 space-y-2">
+        <!-- Puan Sistemi Bilgisi & Ödül Alanı -->
+        <div class="bg-[#1e222a] p-5 rounded-2xl shadow-xl border border-gray-800 space-y-4">
+            <h3 class="text-sm font-semibold text-gray-300">Puan Kazanma Sistemi</h3>
+            <div class="text-xs text-gray-400 bg-[#171a21] p-3 rounded-xl border border-gray-800 space-y-2">
                 <div class="flex justify-between items-center py-1 border-b border-gray-800">
                     <span>💳 Fiş / Tutar Oranı</span>
                     <strong class="text-amber-400">Her 10 TL = 1 Puan</strong>
                 </div>
-                <p class="text-[11px] text-gray-400 italic">Örn: 350 TL tutarındaki fiş için kasadaki görevli onay verir ve hesabınıza 35 puan eklenir.</p>
+                <p class="text-[11px] text-gray-400 italic">Örn: 350 TL tutarındaki fiş için kasadaki görevli onay verir ve 35 puan eklenir.</p>
             </div>
 
-            <div class="flex items-center justify-between p-3 bg-[#171a21] rounded-xl border border-amber-500/30">
+            <!-- Güncellenen Büyük Ödül Alanı (Tıklanabilir) -->
+            <div onclick="openRewardModal()" class="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-500/15 to-[#d4975d]/10 rounded-xl border border-amber-500/40 hover:border-amber-400 transition cursor-pointer shadow-md group">
                 <div class="flex items-center space-x-3">
-                    <img src="logo.webp" alt="Reward" class="w-10 h-10 rounded-full object-cover border border-amber-500/20 bg-gray-800">
+                    <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-xl border border-amber-500/30 group-hover:scale-105 transition">🥤</div>
                     <div>
-                        <p class="text-sm font-semibold text-amber-100">Büyük Ödül: Ücretsiz Ürün</p>
-                        <p class="text-xs text-gray-400">100 Puan karşılığı hediye</p>
+                        <p class="text-sm font-bold text-amber-200">Ücretsiz Kova ve Limonata Kazandınız!</p>
+                        <p class="text-xs text-amber-300/80">Kullanmak için tıkla (100 Puan)</p>
                     </div>
                 </div>
-                <span class="text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-lg">Hedef</span>
+                <span class="text-xs font-bold text-gray-950 bg-amber-400 px-3 py-1.5 rounded-lg shadow group-hover:bg-amber-300 transition">Kullan</span>
             </div>
         </div>
 
     </main>
 
-    <!-- Personel Onaylı Fiş Tutarı Giriş Modal Penceresi -->
+    <!-- Puan Ekleme Modal Penceresi -->
     <div id="qrModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-[#1e222a] border border-gray-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative">
             <h3 class="text-lg font-bold text-amber-200 mb-2">Kasa Personel Onayı</h3>
@@ -134,6 +135,28 @@
         </div>
     </div>
 
+    <!-- Ödül Kullanma / Puan Sıfırlama Modal Penceresi -->
+    <div id="rewardModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#1e222a] border border-gray-800 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative">
+            <h3 class="text-lg font-bold text-amber-200 mb-2">🎁 Ödül Kullanım Onayı</h3>
+            <p class="text-xs text-gray-400 mb-4">Ücretsiz Kova ve Limonata ödülünü vermek için kasa şifresi gereklidir. Onaylandığında puanlar sıfırlanacaktır.</p>
+            
+            <div class="mb-4">
+                <label for="rewardStaffPin" class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
+                <input type="password" id="rewardStaffPin" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 text-base font-semibold">
+            </div>
+
+            <div class="space-y-2 mb-2">
+                <button onclick="useRewardAndReset()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 hover:to-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md cursor-pointer">
+                    Ödülü Ver ve Puanı Sıfırla
+                </button>
+                <button onclick="closeRewardModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 rounded-xl text-sm transition cursor-pointer">
+                    Vazgeç
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="w-full text-center py-4 text-xs text-gray-500 border-t border-gray-800/60">
         &copy; 2026 Sweet Waffle - Sweet Sadakat Kulübü. Tüm Hakları Saklıdır.
@@ -144,14 +167,14 @@
         let currentPoints = parseInt(localStorage.getItem('sweetPoints')) || 0;
         const targetPoints = 100;
         
-        // Kasa görevlisinin bildiği ortak şifre (Bunu dilediğiniz gibi değiştirebilirsiniz)
+        // Kasa görevlisinin ortak şifresi (İstediğiniz gibi değiştirebilirsiniz)
         const STAFF_PIN = "1985";
 
         function updateUI() {
             if (currentPoints > targetPoints) currentPoints = targetPoints;
             document.getElementById('userPoints').innerText = currentPoints + " / " + targetPoints;
             let remaining = targetPoints - currentPoints;
-            document.getElementById('remainingCount').innerText = remaining + " Puan";
+            document.getElementById('remainingCount').innerText = remaining > 0 ? remaining + " Puan" : "Ödüle Hazır!";
             document.getElementById('progressText').innerText = currentPoints + " / " + targetPoints + " Puan";
             let percentage = (currentPoints / targetPoints) * 100;
             document.getElementById('progressBar').style.width = percentage + "%";
@@ -171,6 +194,22 @@
             document.getElementById('qrModal').classList.add('hidden');
         }
 
+        function openRewardModal() {
+            if (currentPoints < targetPoints) {
+                alert('⚠️ Ödülü kullanabilmek için en az 100 puana ulaşmanız gerekmektedir. Şu anki puanınız: ' + currentPoints);
+                return;
+            }
+            document.getElementById('rewardStaffPin').value = '';
+            document.getElementById('rewardModal').classList.remove('hidden');
+            document.getElementById('rewardModal').classList.add('flex');
+            document.getElementById('rewardStaffPin').focus();
+        }
+
+        function closeRewardModal() {
+            document.getElementById('rewardModal').classList.remove('flex');
+            document.getElementById('rewardModal').classList.add('hidden');
+        }
+
         function addPointsWithStaffApproval() {
             const amountInput = document.getElementById('receiptAmount').value;
             const pinInput = document.getElementById('staffPin').value;
@@ -182,11 +221,10 @@
             }
 
             if (pinInput !== STAFF_PIN) {
-                alert('Hatalı Kasa Yetkili Şifresi! Puan yalnızca kasa görevlisi tarafından eklenebilir.');
+                alert('Hatalı Kasa Yetkili Şifresi!');
                 return;
             }
 
-            // Her 10 TL = 1 Puan kuralı (Örn: 350 TL = 35 Puan)
             const earnedPoints = Math.floor(amount / 10);
 
             if (earnedPoints <= 0) {
@@ -198,11 +236,25 @@
             closeModal();
             
             if(currentPoints >= targetPoints) {
-                alert('🎉 Tebrikler! 100 puana ulaştın ve Ücretsiz Ürün kazanma hakkı kazandın!');
+                alert('🎉 Tebrikler! 100 puana ulaştın ve Ücretsiz Kova ve Limonata kazandın!');
                 currentPoints = 100;
             } else {
                 alert('🚀 ' + amount + ' TL tutarındaki fiş için +' + earnedPoints + ' puan başarıyla eklendi!');
             }
+            updateUI();
+        }
+
+        function useRewardAndReset() {
+            const pinInput = document.getElementById('rewardStaffPin').value;
+
+            if (pinInput !== STAFF_PIN) {
+                alert('Hatalı Kasa Yetkili Şifresi!');
+                return;
+            }
+
+            currentPoints = 0;
+            closeRewardModal();
+            alert('✅ Ödül onaylandı! Ücretsiz Kova ve Limonata takdim edildi ve puanınız sıfırlandı.');
             updateUI();
         }
 
