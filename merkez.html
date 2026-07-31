@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Waffle - Merkez Yönetim Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #171a21; color: #f3f4f6; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
 
+    <header class="w-full bg-[#1e222a]/90 backdrop-blur-md shadow-md py-3 px-6 sticky top-0 z-50 border-b border-gray-800">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="logo.webp" alt="Sweet Waffle Logo" class="w-10 h-10 rounded-full object-cover border border-amber-500/30 shadow-md bg-gray-800">
+                <h1 class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-200 via-amber-400 to-[#d4975d] bg-clip-text text-transparent">Sweet Waffle</h1>
+            </div>
+            <div class="text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1.5 rounded-full">
+                Merkez / Kasa Paneli
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md w-full mx-auto p-4 flex-grow flex flex-col justify-center space-y-6">
+
+        <!-- MÜŞTERİ BİLGİ VE İŞLEM PANELİ -->
+        <div id="panelSection" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 space-y-5">
+            <div id="loadingInfo" class="text-center text-gray-400 text-sm py-8">
+                Müşteri bilgileri yükleniyor veya QR kod okutulmadı...
+            </div>
+
+            <div id="customerDetails" class="hidden space-y-5">
+                <div class="bg-[#171a21] p-4 rounded-2xl border border-gray-800 space-y-1">
+                    <p class="text-[11px] text-gray-400">Müşteri Adı Soyadı:</p>
+                    <h2 id="cName" class="text-lg font-bold text-amber-200">-</h2>
+                    <p class="text-[11px] text-gray-400 mt-2">Telefon:</p>
+                    <p id="cPhone" class="text-sm font-semibold text-white">-</p>
+                    <p class="text-[11px] text-gray-400 mt-2">Mevcut Puan:</p>
+                    <p id="cPoints" class="text-2xl font-extrabold text-amber-400">-</p>
+                </div>
+
+                <!-- PUAN EKLEME ALANI -->
+                <div class="space-y-3 border-t border-gray-800 pt-4">
+                    <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider">FİŞ TUTARI İLE PUAN EKLE (10 TL = 1 PUAN)</h3>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Toplam Fiş Tutarı (TL)</label>
+                        <input type="number" id="receiptAmount" placeholder="Örn: 350" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
+                        <input type="password" id="staffPassAdd" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <button onclick="addPoints()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
+                        Puanı Hesaba Ekle
+                    </button>
+                </div>
+
+                <!-- ÖDÜL KULLANIMI (200 PUAN DÜŞME) ALANI -->
+                <div class="space-y-3 border-t border-gray-800 pt-4">
+                    <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider">ÖDÜL KULLANIMI (200 PUAN DÜŞÜMÜ)</h3>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Kasa Yetkili Şifresi</label>
+                        <input type="password" id="staffPassRedeem" placeholder="Personel Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
+                    </div>
+                    <button onclick="redeemReward()" class="w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-md cursor-pointer">
+                        Ödülü Ver ve Kalanı Cüzdanda Bırak
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full text-center py-4 text-xs text-gray-500 border-t border-gray-800/60">
+        &copy; 2026 Sweet Waffle - Merkez Yönetim Paneli
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://yatgnoiybbjvmreikeqs.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const STAFF_PASSWORD = "123"; // Kasa yetkili şifrenizi buraya yazabilirsiniz
+        let currentCustomer = null;
+
+        async function initMerkez() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const phone = urlParams.get('phone');
+
+            if (!phone) {
+                document.getElementById('loadingInfo').innerText = "Lütfen müşteri QR kodunu okutunuz.";
+                return;
+            }
+
+            let { data, error } = await client.from('customers').select('*').eq('phone', phone).single();
+
+            if (error || !data) {
+                document.getElementById('loadingInfo').innerText = "Müşteri sistemde bulunamadı!";
+                return;
+            }
+
+            currentCustomer = data;
+            document.getElementById('loadingInfo').classList.add('hidden');
+            document.getElementById('customerDetails').classList.remove('hidden');
+
+            document.getElementById('cName').innerText = data.name;
+            document.getElementById('cPhone').innerText = data.phone;
+            document.getElementById('cPoints').innerText = (data.points || 0) + " Puan";
+        }
+
+        async function addPoints() {
+            const amountInput = document.getElementById('receiptAmount').value;
+            const pass = document.getElementById('staffPassAdd').value;
+
+            if (pass !== STAFF_PASSWORD) {
+                alert('Yetkili şifresi hatalı!');
+                return;
+            }
+
+            const totalAmount = parseFloat(amountInput);
+            if (isNaN(totalAmount) || totalAmount <= 0) {
+                alert('Lütfen geçerli bir fiş tutarı giriniz.');
+                return;
+            }
+
+            // 10 TL = 1 Puan hesabı
+            const earnedPoints = Math.floor(totalAmount / 10);
+            if (earnedPoints <= 0) {
+                alert('Bu tutar puan kazanmak için çok düşük (Minimum 10 TL gerekli).');
+                return;
+            }
+
+            let newTotalPoints = (currentCustomer.points || 0) + earnedPoints;
+
+            let { error } = await client
+                .from('customers')
+                .update({ points: newTotalPoints })
+                .eq('phone', currentCustomer.phone);
+
+            if (error) {
+                alert('Puan eklenirken hata oluştu: ' + error.message);
+                return;
+            }
+
+            alert(earnedPoints + " puan başarıyla eklendi! Toplam Puan: " + newTotalPoints);
+            location.reload();
+        }
+
+        async function redeemReward() {
+            const pass = document.getElementById('staffPassRedeem').value;
+
+            if (pass !== STAFF_PASSWORD) {
+                alert('Yetkili şifresi hatalı!');
+                return;
+            }
+
+            let currentPoints = currentCustomer.points || 0;
+            const targetPoints = 200;
+
+            if (currentPoints < targetPoints) {
+                alert('Müşterinin ödül için yeterli (200) puanı yok!');
+                return;
+            }
+
+            // 200 puan düşülür, artan küsurat cüzdanda kalır (Örn: 206 - 200 = 6)
+            let remainingPoints = currentPoints - targetPoints;
+
+            let { error } = await client
+                .from('customers')
+                .update({ points: remainingPoints })
+                .eq('phone', currentCustomer.phone);
+
+            if (error) {
+                alert('İşlem sırasında hata oluştu: ' + error.message);
+                return;
+            }
+
+            alert('Ödül başarıyla verildi! Kalan ' + remainingPoints + ' puan müşterinin cüzdanında bırakıldı.');
+            location.reload();
+        }
+
+        initMerkez();
+    </script>
+</body>
+</html>
