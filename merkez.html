@@ -15,7 +15,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- ŞİFRE GİRİŞ EKRANI (QR OKUTULUNCA ÖNCE BU ÇIKAR) -->
+    <!-- ŞİFRE GİRİŞ EKRANI -->
     <div id="authModal" class="fixed inset-0 bg-[#171a21]/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-[#1e222a] p-6 rounded-3xl shadow-2xl border border-gray-800 max-w-sm w-full text-center space-y-4">
             <div class="space-y-1">
@@ -39,7 +39,7 @@
                 <button onclick="closeQrScanner()" class="text-gray-400 hover:text-white text-xs bg-gray-800 px-2.5 py-1 rounded-lg">Kapat</button>
             </div>
             <div id="reader" class="overflow-hidden rounded-2xl border border-gray-800"></div>
-            <p class="text-[11px] text-gray-400">Müşterinin sadakat kartındaki veya telefonundaki QR kodu kameraya gösterin.</p>
+            <p class="text-[11px] text-gray-400">Müşterinin telefonundaki QR kodu kameraya gösterin.</p>
         </div>
     </div>
 
@@ -62,7 +62,7 @@
             <div class="flex space-x-2">
                 <input type="tel" id="searchPhone" placeholder="05XX XXX XX XX" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
                 <button onclick="searchCustomer()" class="bg-amber-500 hover:bg-amber-600 text-gray-950 font-bold px-4 rounded-xl text-sm transition cursor-pointer whitespace-nowrap">Ara</button>
-                <button onclick="openQrScanner()" class="bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold px-4 rounded-xl text-sm transition cursor-pointer whitespace-nowrap flex items-center justify-center space-x-1" title="QR ile Ara">
+                <button onclick="openQrScanner()" class="bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold px-4 rounded-xl text-sm transition cursor-pointer whitespace-nowrap flex items-center justify-center space-x-1">
                     <span>📷 QR</span>
                 </button>
             </div>
@@ -161,7 +161,6 @@
             document.getElementById('customerCard').classList.remove('hidden');
         }
 
-        // QR Tarayıcıyı Açma ve Yönetme Fonksiyonları
         function openQrScanner() {
             document.getElementById('qrModal').classList.remove('hidden');
             if (!html5QrCode) {
@@ -172,21 +171,16 @@
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText) => {
-                    // QR kod okunduğunda çalışacak kısım (Telefon numarası veya bağlantı içeriyorsa ayıkla)
                     let phone = decodedText.trim();
-                    // Eğer QR kod içinde link veya parametre varsa (örn: ?phone=05...)
                     if (phone.includes('phone=')) {
                         const urlParams = new URLSearchParams(phone.split('?')[1]);
                         phone = urlParams.get('phone') || phone;
                     }
-                    
                     document.getElementById('searchPhone').value = phone;
                     closeQrScanner();
                     searchCustomerByPhone(phone);
                 },
-                (errorMessage) => {
-                    // Tarama hatalarını yoksay (kamera ararken normaldir)
-                }
+                (errorMessage) => {}
             ).catch(err => {
                 alert("Kamera başlatılamadı veya izin verilmedi: " + err);
                 closeQrScanner();
@@ -197,7 +191,7 @@
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
                     document.getElementById('qrModal').classList.add('hidden');
-                }).catch(err => {
+                }).catch(() => {
                     document.getElementById('qrModal').classList.add('hidden');
                 });
             } else {
