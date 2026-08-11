@@ -8,9 +8,14 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA & Apple Meta Etiketleri -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#171a21">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.webp">
+
     <style>
         body { font-family: 'Poppins', sans-serif; background: #171a21; color: #f3f4f6; }
     </style>
@@ -227,7 +232,9 @@
             if (qrInitialized) return; 
             qrContainer.innerHTML = "";
             
-            const targetUrl = window.location.origin + "/merkez.html?phone=" + phone;
+            const currentDomain = window.location.origin;
+            const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            const targetUrl = `${currentDomain}${currentPath}merkez.html?phone=${phone}`;
 
             new QRCode(qrContainer, {
                 text: targetUrl, width: 130, height: 130, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
@@ -235,7 +242,6 @@
             qrInitialized = true;
         }
 
-        // Müşteri ekranı açıkken kasadan puan eklendiğinde veya ödül düşüldüğünde anlık güncellenir
         setInterval(async () => {
             const savedPhone = localStorage.getItem('sweetUserPhone');
             if (savedPhone) {
@@ -245,6 +251,15 @@
         }, 3000);
 
         checkUser();
+
+        // PWA Service Worker Kaydı
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker kayıt başarılı:', reg.scope))
+                    .catch(err => console.log('Service Worker kayıt hatası:', err));
+            });
+        }
     </script>
 </body>
 </html>
