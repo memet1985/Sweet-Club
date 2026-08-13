@@ -6,8 +6,9 @@
     <title>Sweet Waffle - Merkez Yönetim Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- QR Kod Okuyucu Kütüphanesi -->
+    <!-- QR Kod Okuyucu ve Üretici Kütüphaneleri -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- PWA & Apple Meta Etiketleri -->
@@ -65,6 +66,7 @@
 
     <main class="max-w-md w-full mx-auto p-4 flex-grow space-y-6">
 
+        <!-- MÜŞTERİ ARAMA KISMI -->
         <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-3">
             <h2 class="text-sm font-bold text-amber-200">Müşteri Arama (Telefon veya QR)</h2>
             <div class="flex space-x-2">
@@ -74,6 +76,20 @@
                     📷 QR ile Ara
                 </button>
             </div>
+        </div>
+
+        <!-- MERKEZDEKİLER İÇİN ÇIKTI ALINABİLİR KAYIT QR KODU -->
+        <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 text-center space-y-3">
+            <div>
+                <h3 class="text-sm font-bold text-amber-200">Müşteri Kayıt QR Kod (Çıktı Alanı)</h3>
+                <p class="text-xs text-gray-400 mt-0.5">Bu QR kodun çıktısını alıp kasaya koyabilirsiniz. Okutan direkt üye olur.</p>
+            </div>
+            <div class="flex justify-center bg-white p-3 rounded-2xl w-fit mx-auto shadow-md">
+                <div id="storeRegisterQRCode"></div>
+            </div>
+            <button onclick="window.print()" class="text-xs bg-gray-800 hover:bg-gray-700 text-amber-300 border border-gray-700 font-medium py-2 px-4 rounded-xl transition cursor-pointer w-full">
+                🖨️ Bu Sayfanın/QR'ın Çıktısını Al
+            </button>
         </div>
 
         <div id="customerCard" class="hidden bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-4">
@@ -121,6 +137,19 @@
         let html5QrCode = null;
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Mağaza/Kasa kayıt QR kodunu otomatik üret (index.html sayfasına yönlendirir)
+            const storeQrContainer = document.getElementById('storeRegisterQRCode');
+            if (storeQrContainer) {
+                storeQrContainer.innerHTML = "";
+                const currentDomain = window.location.origin;
+                const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+                const registerUrl = `${currentDomain}${currentPath}index.html`;
+
+                new QRCode(storeQrContainer, {
+                    text: registerUrl, width: 140, height: 140, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
+                });
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const phone = urlParams.get('phone');
             if (phone) {
