@@ -74,8 +74,8 @@
 
         <!-- TELEFONA İNDİRME / PAYLAŞIM ALANI -->
         <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 text-center space-y-3 print-hide">
-            <h2 class="text-sm font-bold text-amber-200">📱 Bu Sayfayı Başkasına Gönder / İndir</h2>
-            <p class="text-xs text-gray-400">Bu paneli başka bir telefonda çalıştırmak veya dosya olarak indirmek için aşağıdaki butonları kullanabilirsiniz:</p>
+            <h2 class="text-sm font-bold text-amber-200">📱 Bu Paneli Başkasına Gönder / İndir</h2>
+            <p class="text-xs text-gray-400">Bu yönetim panelini dosya olarak indirmek veya başka bir cihaza göndermek için kullanın:</p>
             <div class="grid grid-cols-2 gap-2 pt-1">
                 <button onclick="downloadAsHtmlFile()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-bold py-2.5 px-3 rounded-xl text-xs transition cursor-pointer flex items-center justify-center space-x-1.5">
                     <span>📥 Dosya İndir</span>
@@ -312,7 +312,7 @@
             alert('✅ Ödül başarıyla verildi! Kalan ' + remainingPoints + ' puan müşterinin cüzdanında bırakıldı.');
         }
 
-        // Telefona Dosya Olarak İndirme Fonksiyonu
+        // Yönetim Paneli Dosyası Olarak İndirme
         function downloadAsHtmlFile() {
             const htmlContent = document.documentElement.outerHTML;
             const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
@@ -326,12 +326,12 @@
             URL.revokeObjectURL(url);
         }
 
-        // Bağlantıyı Paylaşma Fonksiyonu
+        // Bağlantıyı Paylaşma
         async function sharePanelLink() {
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: 'Sweet Waffle - Merkez Paneli',
+                        title: 'Sweet Waffle - Merkez Yönetim Paneli',
                         text: 'Sweet Waffle Kasa ve Yönetim Paneli',
                         url: window.location.href
                     });
