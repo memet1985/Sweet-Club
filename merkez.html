@@ -319,7 +319,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'index.html';
+            a.download = 'merkez.html';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -331,7 +331,7 @@
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: 'Sweet Waffle - Yönetim Paneli',
+                        title: 'Sweet Waffle - Merkez Paneli',
                         text: 'Sweet Waffle Kasa ve Yönetim Paneli',
                         url: window.location.href
                     });
