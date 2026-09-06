@@ -147,15 +147,14 @@
             const storeQrContainer = document.getElementById('storeRegisterQRCode');
             if (storeQrContainer) {
                 storeQrContainer.innerHTML = "";
-                const hostUrl = window.location.origin;
-                const registerUrl = hostUrl + "/index.html";
+                // Belirttiğiniz Vercel adresine yönlendirme
+                const registerUrl = "https://sweet-club-9ybf4gqnt-memet1985s-projects.vercel.app/";
 
                 new QRCode(storeQrContainer, {
                     text: registerUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
                 });
             }
 
-            // Şifre inputuna klavyeden Enter basıldığında giriş yapmayı sağla
             const modalPinInput = document.getElementById('modalPin');
             if (modalPinInput) {
                 modalPinInput.focus();
@@ -299,7 +298,6 @@
 
             const remainingPoints = currentPoints - rewardCost;
 
-            // Hatalı değişken düzeltildi (activeCode yerine activeCustomer.phone kullanıldı)
             let { error } = await client.from('customers').update({ points: remainingPoints }).eq('phone', activeCustomer.phone);
 
             if (error) {
