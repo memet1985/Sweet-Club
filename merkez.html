@@ -6,12 +6,10 @@
     <title>Sweet Waffle - Merkez Yönetim Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- QR Kod Okuyucu ve Üretici Kütüphaneleri -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- PWA & Apple Meta Etiketleri -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#171a21">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -30,7 +28,6 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- ŞİFRE GİRİŞ EKRANI -->
     <div id="authModal" class="fixed inset-0 bg-[#171a21]/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-[#1e222a] p-6 rounded-3xl shadow-2xl border border-gray-800 max-w-sm w-full text-center space-y-4">
             <div class="space-y-1">
@@ -46,7 +43,6 @@
         </div>
     </div>
 
-    <!-- QR TARAYICI MODALI -->
     <div id="qrModal" class="hidden fixed inset-0 bg-[#171a21]/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-[#1e222a] p-6 rounded-3xl shadow-2xl border border-gray-800 max-w-sm w-full text-center space-y-4">
             <div class="flex justify-between items-center">
@@ -72,7 +68,6 @@
 
     <main class="max-w-md w-full mx-auto p-4 flex-grow space-y-6">
 
-        <!-- EN ÜSTTE HEMEN GÖRÜNEN ÇIKTI ALINABİLİR KAYIT QR KODU -->
         <div id="printableQRCodeArea" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 text-center space-y-4">
             <div>
                 <h2 class="text-base font-bold text-amber-200">Sweet Waffle Sadakat Kulübü</h2>
@@ -87,7 +82,6 @@
             </button>
         </div>
 
-        <!-- MÜŞTERİ ARAMA KISMI -->
         <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-3 print-hide">
             <h2 class="text-sm font-bold text-amber-200">Müşteri Arama (Telefon veya QR)</h2>
             <div class="flex space-x-2">
@@ -148,9 +142,9 @@
             if (storeQrContainer) {
                 storeQrContainer.innerHTML = "";
                 
-                // Vercel üzerinde doğru müşteri kayıt dosyasını (index.html) hedefliyoruz
-                const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-                const registerUrl = baseUrl + '/index.html';
+                // Vercel üzerindeki ana domaini alıp direkt müşteri kayıt sayfası olan index.html'e kilitliyoruz
+                const hostUrl = window.location.origin;
+                const registerUrl = hostUrl + "/index.html";
 
                 new QRCode(storeQrContainer, {
                     text: registerUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
@@ -303,9 +297,4 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
                     .then(reg => console.log('Service Worker kayıt başarılı:', reg.scope))
-                    .catch(err => console.log('Service Worker kayıt hatası:', err));
-            });
-        }
-    </script>
-</body>
-</html>
+                    .catch(err => console.log('Service Worker kayıt hatası
