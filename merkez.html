@@ -1,585 +1,304 @@
- <!DOCTYPE html>
-
+<!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Sweet Waffle - Merkez Yönetim Paneli</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- QR Kod Okuyucu ve Üretici Kütüphaneleri -->
-
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     
-
-    <!-- PWA & Apple Meta Etiketleri -->
-
     <link rel="manifest" href="manifest.json">
-
     <meta name="theme-color" content="#171a21">
-
     <meta name="apple-mobile-web-app-capable" content="yes">
-
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <link rel="apple-touch-icon" href="logo.webp">
 
-
     <style>
-
         body { font-family: 'Poppins', sans-serif; background: #171a21; color: #f3f4f6; }
-
         @media print {
-
             body * { visibility: hidden; }
-
             #printableQRCodeArea, #printableQRCodeArea * { visibility: visible; }
-
             #printableQRCodeArea { position: absolute; left: 0; top: 0; width: 100%; border: none; background: white; color: black; }
-
             .print-hide { display: none !important; }
-
         }
-
     </style>
-
 </head>
-
 <body class="min-h-screen flex flex-col justify-between">
 
-
-    <!-- ŞİFRE GİRİŞ EKRANI -->
-
     <div id="authModal" class="fixed inset-0 bg-[#171a21]/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
-
         <div class="bg-[#1e222a] p-6 rounded-3xl shadow-2xl border border-gray-800 max-w-sm w-full text-center space-y-4">
-
             <div class="space-y-1">
-
                 <h2 class="text-lg font-bold text-amber-200">Kasa Yetki Doğrulaması 🔒</h2>
-
-                <p class="text-xs text-gray-400">İşlem paneline erişmek için şifre giriniz.</p>
-
+                <p class="text-xs text-gray-400">İşlem paneline erişmek için şifre giriniz. (Şifre: 2026)</p>
             </div>
-
             <div>
-
                 <input type="password" id="modalPin" placeholder="Kasa Şifresi" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-center text-lg tracking-widest focus:outline-none focus:border-amber-500">
-
             </div>
-
             <button onclick="verifyModalPin()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md cursor-pointer">
-
                 Paneli Aç
-
             </button>
-
         </div>
-
     </div>
-
-
-    <!-- QR TARAYICI MODALI -->
 
     <div id="qrModal" class="hidden fixed inset-0 bg-[#171a21]/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
-
         <div class="bg-[#1e222a] p-6 rounded-3xl shadow-2xl border border-gray-800 max-w-sm w-full text-center space-y-4">
-
             <div class="flex justify-between items-center">
-
                 <h2 class="text-sm font-bold text-amber-200">Müşteri QR Kodunu Okutun</h2>
-
                 <button onclick="closeQrScanner()" class="text-gray-400 hover:text-white text-xs bg-gray-800 px-2.5 py-1 rounded-lg">Kapat</button>
-
             </div>
-
             <div id="reader" class="overflow-hidden rounded-2xl border border-gray-800"></div>
-
             <p class="text-[11px] text-gray-400">Müşterinin telefonundaki QR kodu kameraya gösterin.</p>
-
         </div>
-
     </div>
 
-
     <header class="w-full bg-[#1e222a]/90 backdrop-blur-md shadow-md py-3 px-6 sticky top-0 z-50 border-b border-gray-800 print-hide">
-
         <div class="max-w-md mx-auto flex justify-between items-center">
-
             <div class="flex items-center space-x-3">
-
                 <img src="logo.webp" alt="Sweet Waffle Logo" class="w-10 h-10 rounded-full object-cover border border-amber-500/30 shadow-md bg-gray-800">
-
                 <h1 class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-200 via-amber-400 to-[#d4975d] bg-clip-text text-transparent">Sweet Waffle</h1>
-
             </div>
-
             <div class="text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-full">
-
                 Merkez / Kasa Paneli
-
             </div>
-
         </div>
-
     </header>
-
 
     <main class="max-w-md w-full mx-auto p-4 flex-grow space-y-6">
 
-
-        <!-- EN ÜSTTE HEMEN GÖRÜNEN ÇIKTI ALINABİLİR KAYIT QR KODU -->
-
         <div id="printableQRCodeArea" class="bg-[#1e222a] p-6 rounded-3xl shadow-xl border border-gray-800 text-center space-y-4">
-
             <div>
-
                 <h2 class="text-base font-bold text-amber-200">Sweet Waffle Sadakat Kulübü</h2>
-
                 <p class="text-xs text-gray-400 mt-1">Hemen üye olmak ve puan kazanmaya başlamak için QR kodu okutun!</p>
-
             </div>
-
             <div class="flex justify-center bg-white p-4 rounded-2xl w-fit mx-auto shadow-md">
-
                 <div id="storeRegisterQRCode"></div>
-
             </div>
-
             <p class="text-[11px] text-amber-400 font-medium">Telefon kameranızla taratmanız yeterlidir.</p>
-
             <button onclick="window.print()" class="print-hide w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3 px-4 rounded-xl transition cursor-pointer shadow-md text-sm flex items-center justify-center space-x-2">
-
                 <span>🖨️ Bu QR Kodun Çıktısını Al</span>
-
             </button>
-
         </div>
-
-
-        <!-- MÜŞTERİ ARAMA KISMI -->
 
         <div class="bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-3 print-hide">
-
             <h2 class="text-sm font-bold text-amber-200">Müşteri Arama (Telefon veya QR)</h2>
-
             <div class="flex space-x-2">
-
                 <input type="tel" id="searchPhone" placeholder="05XX XXX XX XX" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-
                 <button onclick="searchCustomer()" class="bg-amber-500 hover:bg-amber-600 text-gray-950 font-bold px-4 rounded-xl text-sm transition cursor-pointer whitespace-nowrap">Ara</button>
-
                 <button onclick="openQrScanner()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 text-white font-bold px-4 rounded-xl text-sm transition cursor-pointer whitespace-nowrap flex items-center justify-center shadow-md">
-
                     📷 QR ile Ara
-
                 </button>
-
             </div>
-
         </div>
-
 
         <div id="customerCard" class="hidden bg-[#1e222a] p-5 rounded-3xl shadow-xl border border-gray-800 space-y-4 print-hide">
-
             <div class="bg-[#171a21] p-4 rounded-2xl border border-gray-800 space-y-1">
-
                 <p class="text-xs text-gray-400">Müşteri Adı Soyadı:</p>
-
                 <h3 id="resName" class="text-lg font-bold text-amber-100">-</h3>
-
                 <p class="text-xs text-gray-400 mt-2">Telefon:</p>
-
                 <p id="resPhone" class="text-sm font-semibold text-gray-300">-</p>
-
                 <p class="text-xs text-gray-400 mt-2">Mevcut Puan:</p>
-
                 <p id="resPoints" class="text-2xl font-extrabold text-amber-400">0 Puan</p>
-
             </div>
 
-
             <div class="border-t border-gray-800 pt-4 space-y-3">
-
                 <h3 class="text-xs font-bold text-amber-200 uppercase tracking-wider">Fiş Tutarı ile Puan Ekle (10 TL = 1 Puan)</h3>
-
                 <div>
-
                     <label class="block text-xs font-medium text-gray-300 mb-1">Toplam Fiş Tutarı (TL)</label>
-
                     <input type="number" id="receiptAmount" placeholder="Örn: 350" class="w-full bg-[#171a21] border border-gray-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-amber-500">
-
                 </div>
-
                 <button onclick="addPoints()" class="w-full bg-gradient-to-r from-amber-500 to-[#d4975d] hover:from-amber-600 text-gray-950 font-bold py-3 rounded-xl text-sm transition shadow-md cursor-pointer">
-
                     Puanı Hesaba Ekle
-
                 </button>
-
             </div>
-
 
             <div class="border-t border-gray-800 pt-4 space-y-3">
-
                 <h3 class="text-xs font-bold text-red-400 uppercase tracking-wider">Ödül Kullanımı (200 Puan Düşümü)</h3>
-
                 <button onclick="useReward()" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/40 font-bold py-3 rounded-xl text-sm transition cursor-pointer">
-
                     Ödülü Ver ve Kalanı Cüzdanda Bırak
-
                 </button>
-
             </div>
-
         </div>
-
 
     </main>
 
-
     <footer class="w-full text-center py-4 text-xs text-gray-500 border-t border-gray-800/60 print-hide">
-
         &copy; 2026 Sweet Waffle - Merkez Yönetim Paneli
-
     </footer>
 
-
     <script>
-
         const SUPABASE_URL = 'https://yatgnoiybbjvmreikeqs.supabase.co';
-
         const SUPABASE_ANON_KEY = 'sb_publishable_8BxYi7oOUnHvkHAJQNaitQ_kKlHk_Y_';
-
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         
-
         const STAFF_PIN = "2026"; 
-
         let activeCustomer = null;
-
         let html5QrCode = null;
 
-
         window.addEventListener('DOMContentLoaded', () => {
-
-            // Mağaza/Kasa kayıt QR kodunu sayfa açılır açılmaz en üste üret
-
             const storeQrContainer = document.getElementById('storeRegisterQRCode');
-
             if (storeQrContainer) {
-
                 storeQrContainer.innerHTML = "";
-
                 const currentDomain = window.location.origin;
-
                 const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-
                 const registerUrl = `${currentDomain}${currentPath}index.html`;
 
-
                 new QRCode(storeQrContainer, {
-
                     text: registerUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
-
                 });
-
             }
-
 
             const urlParams = new URLSearchParams(window.location.search);
-
             const phone = urlParams.get('phone');
-
             if (phone) {
-
                 document.getElementById('searchPhone').value = phone;
-
             }
-
         });
 
-
         function verifyModalPin() {
-
             const enteredPin = document.getElementById('modalPin').value.trim();
-
             if (enteredPin === STAFF_PIN) {
-
                 document.getElementById('authModal').style.display = 'none';
-
                 const urlParams = new URLSearchParams(window.location.search);
-
                 const phone = urlParams.get('phone');
-
                 if (phone) {
-
                     searchCustomerByPhone(phone);
-
                 }
-
             } else {
-
                 alert('Hatalı Kasa Şifresi!');
-
                 document.getElementById('modalPin').value = '';
-
             }
-
         }
-
 
         async function searchCustomer() {
-
             const phone = document.getElementById('searchPhone').value.trim();
-
             if (!phone) {
-
                 alert('Lütfen telefon numarası giriniz.');
-
                 return;
-
             }
-
             searchCustomerByPhone(phone);
-
         }
-
 
         async function searchCustomerByPhone(phone) {
-
             let { data, error } = await client.from('customers').select('*').eq('phone', phone).single();
 
-
             if (error || !data) {
-
                 alert('Bu telefon numarasına ait kayıtlı müşteri bulunamadı!');
-
                 document.getElementById('customerCard').classList.add('hidden');
-
                 activeCustomer = null;
-
                 return;
-
             }
-
 
             activeCustomer = data;
-
             document.getElementById('resName').innerText = data.name;
-
             document.getElementById('resPhone').innerText = data.phone;
-
             document.getElementById('resPoints').innerText = (data.points || 0) + " Puan";
-
             document.getElementById('customerCard').classList.remove('hidden');
-
         }
-
 
         function openQrScanner() {
-
             document.getElementById('qrModal').classList.remove('hidden');
-
             if (!html5QrCode) {
-
                 html5QrCode = new Html5Qrcode("reader");
-
             }
-
             
-
             html5QrCode.start(
-
                 { facingMode: "environment" },
-
                 { fps: 10, qrbox: { width: 250, height: 250 } },
-
                 (decodedText) => {
-
                     let phone = decodedText.trim();
-
                     if (phone.includes('phone=')) {
-
                         const urlParams = new URLSearchParams(phone.split('?')[1]);
-
                         phone = urlParams.get('phone') || phone;
-
                     }
-
                     document.getElementById('searchPhone').value = phone;
-
                     closeQrScanner();
-
                     searchCustomerByPhone(phone);
-
                 },
-
                 (errorMessage) => {}
-
             ).catch(err => {
-
-                alert("Kamera başlatılamadı veya izin verilmedi: " + err);
-
+                alert("Kamera başlatılamadı veya izin verilmedi. Lütfen tarayıcınızın kamera iznini kontrol edin: " + err);
                 closeQrScanner();
-
             });
-
         }
-
 
         function closeQrScanner() {
-
             if (html5QrCode && html5QrCode.isScanning) {
-
                 html5QrCode.stop().then(() => {
-
                     document.getElementById('qrModal').classList.add('hidden');
-
                 }).catch(() => {
-
                     document.getElementById('qrModal').classList.add('hidden');
-
                 });
-
             } else {
-
                 document.getElementById('qrModal').classList.add('hidden');
-
             }
-
         }
 
-
         async function addPoints() {
-
             if (!activeCustomer) return;
-
             const amountInput = document.getElementById('receiptAmount').value;
-
             const amount = parseFloat(amountInput);
 
-
             if (isNaN(amount) || amount <= 0) {
-
                 alert('Lütfen geçerli bir fiş tutarı giriniz.');
-
                 return;
-
             }
-
 
             const earnedPoints = Math.floor(amount / 10);
-
             if (earnedPoints <= 0) {
-
                 alert('Girilen tutar için en az 1 puan kazanılmalıdır (Minimum 10 TL).');
-
                 return;
-
             }
-
 
             const newTotalPoints = (activeCustomer.points || 0) + earnedPoints;
 
-
             let { error } = await client.from('customers').update({ points: newTotalPoints }).eq('phone', activeCustomer.phone);
 
-
             if (error) {
-
                 alert('Puan eklenirken hata oluştu: ' + error.message);
-
                 return;
-
             }
-
 
             activeCustomer.points = newTotalPoints;
-
             document.getElementById('resPoints').innerText = newTotalPoints + " Puan";
-
             document.getElementById('receiptAmount').value = '';
-
             alert('🚀 Başarıyla ' + earnedPoints + ' puan eklendi!');
-
         }
 
-
         async function useReward() {
-
             if (!activeCustomer) return;
 
-
             const currentPoints = activeCustomer.points || 0;
-
             const rewardCost = 200;
 
-
             if (currentPoints < rewardCost) {
-
                 alert('⚠️ Müşterinin ödül için yeterli (200) puanı yok!');
-
                 return;
-
             }
-
 
             const remainingPoints = currentPoints - rewardCost;
 
-
             let { error } = await client.from('customers').update({ points: remainingPoints }).eq('phone', activeCustomer.phone);
 
-
             if (error) {
-
                 alert('İşlem başarısız: ' + error.message);
-
                 return;
-
             }
 
-
             activeCustomer.points = remainingPoints;
-
             document.getElementById('resPoints').innerText = remainingPoints + " Puan";
-
             alert('✅ Ödül başarıyla verildi! Kalan ' + remainingPoints + ' puan müşterinin cüzdanında bırakıldı.');
-
         }
-
-
-        // PWA Service Worker Kaydı
 
         if ('serviceWorker' in navigator) {
-
             window.addEventListener('load', () => {
-
                 navigator.serviceWorker.register('/sw.js')
-
                     .then(reg => console.log('Service Worker kayıt başarılı:', reg.scope))
-
                     .catch(err => console.log('Service Worker kayıt hatası:', err));
-
             });
-
         }
-
     </script>
-
 </body>
-
-</html> 
+</html>
