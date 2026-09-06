@@ -147,9 +147,10 @@
             const storeQrContainer = document.getElementById('storeRegisterQRCode');
             if (storeQrContainer) {
                 storeQrContainer.innerHTML = "";
-                const currentDomain = window.location.origin;
-                // Merkez panelinde olsa bile QR kodun müşteriyi her zaman ana kayıt sayfasına (index.html) yönlendirmesini sağlıyoruz:
-                const registerUrl = `${currentDomain}/index.html`;
+                
+                // Vercel üzerinde doğru müşteri kayıt dosyasını (index.html) hedefliyoruz
+                const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+                const registerUrl = baseUrl + '/index.html';
 
                 new QRCode(storeQrContainer, {
                     text: registerUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
