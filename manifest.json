@@ -1,7 +1,7 @@
 {
   "name": "Sweet Waffle Sadakat Kulübü",
   "short_name": "Sweet Waffle",
-  "start_url": "/index.html",
+  "start_url": "/merkez.html",
   "display": "standalone",
   "background_color": "#171a21",
   "theme_color": "#171a21",
